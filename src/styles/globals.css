@@ -583,3 +583,185 @@ button:focus-visible {
 .board-canvas {
   flex: 1;
 }
+
+/* ------------------------------ view tabs -------------------------------- */
+
+.view-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.view-tab {
+  position: relative;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 7px 13px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.view-tab:hover {
+  color: var(--text);
+}
+
+.view-tab.is-active {
+  color: var(--text);
+}
+
+.view-tab__underline {
+  position: absolute;
+  inset: 0;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  z-index: -1;
+}
+
+/* ------------------------------ info cards ------------------------------- */
+
+.info-card {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px 12px;
+}
+
+.info-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.info-card__kind {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--card-accent) 75%, var(--text-faint));
+}
+
+.info-card__glyph {
+  font-size: 13px;
+  color: var(--card-accent);
+}
+
+.info-card__title {
+  margin: 5px 0 3px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+.info-card__title.mono {
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+}
+
+.info-card__subtitle {
+  margin: 0;
+  font-size: 9.5px;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+}
+
+.info-card--environment .info-card__title {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.info-card--note {
+  border-style: dashed;
+  border-top-style: solid;
+}
+
+.info-card--decision {
+  border-top-width: 1px;
+  border-left: 3px solid var(--card-accent);
+}
+
+/* ------------------------------ role cards ------------------------------- */
+
+.role-card {
+  display: flex;
+  flex-direction: column;
+  padding: 11px 14px 12px;
+}
+
+.role-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.role-card__count {
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.role-card__name {
+  margin: 7px 0 4px;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.role-card__desc {
+  margin: 0;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--text-dim);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ------------------------------ track labels ----------------------------- */
+
+.board-label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  pointer-events: none;
+}
+
+.board-label__title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--text-faint);
+}
+
+.board-label__subtitle {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  opacity: 0.75;
+}
+
+@media (max-width: 900px) {
+  .view-tabs {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    padding: 8px 12px;
+  }
+}

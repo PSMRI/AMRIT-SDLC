@@ -117,6 +117,21 @@ export const incidentNodes: InfoNode[] = [
     accentVar: '--lane-devops',
     roles: ['l2-support'],
   },
+  {
+    id: 'inc-matrix',
+    kind: 'note',
+    title: 'Responsibility Matrix',
+    subtitle: 'who owns what',
+    detail: [
+      'L1 Support / Ops — first triage, known issues, basic support',
+      'L2 Support — technical investigation, escalation to AMM',
+      'Engineering — root cause analysis, fix, QA, deployment',
+      'QA — build verification, fix validation',
+      'Release Manager — confirm fix deployment, update JIRA',
+      'Scrum Master / PO — sprint-level prioritization & comms',
+    ],
+    roles: ['l2-support', 'qa-manager', 'scrum-master'],
+  },
 ]
 
 export const incidentEdges: InfoEdge[] = [

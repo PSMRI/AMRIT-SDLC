@@ -3,12 +3,19 @@ import { ReactFlowProvider } from '@xyflow/react'
 import { BoardCanvas } from './components/board/BoardCanvas'
 import { DetailPanel } from './components/panel/DetailPanel'
 import { TopBar } from './components/chrome/TopBar'
+import { useHashView } from './hooks/useHashView'
 import { useTheme } from './hooks/useTheme'
-import { buildLifecycleGraph } from './layout/lifecycleLayout'
+import { useAppStore } from './store/useAppStore'
+import { viewById } from './data/views'
 
 function App() {
   useTheme()
-  const { nodes, edges } = useMemo(() => buildLifecycleGraph(), [])
+  useHashView()
+  const activeView = useAppStore((s) => s.activeView)
+  const { nodes, edges } = useMemo(
+    () => viewById.get(activeView)!.buildGraph(),
+    [activeView],
+  )
 
   return (
     <ReactFlowProvider>

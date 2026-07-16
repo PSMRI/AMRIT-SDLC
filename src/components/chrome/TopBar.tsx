@@ -1,4 +1,5 @@
 import { useAppStore } from '../../store/useAppStore'
+import { ViewTabs } from './ViewTabs'
 
 export function TopBar() {
   const theme = useAppStore((s) => s.theme)
@@ -12,6 +13,7 @@ export function TopBar() {
         </span>
         <h1 className="topbar__title">Software Development Lifecycle</h1>
       </div>
+      <ViewTabs />
       <div className="topbar__actions">
         <button
           type="button"

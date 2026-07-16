@@ -5,7 +5,6 @@ import {
   Controls,
   MiniMap,
   ReactFlow,
-  useNodesInitialized,
   useReactFlow,
   type NodeMouseHandler,
 } from '@xyflow/react'
@@ -48,17 +47,18 @@ export function BoardCanvas({ nodes, edges }: BoardCanvasProps) {
   const theme = useAppStore((s) => s.theme)
   const activeView = useAppStore((s) => s.activeView)
   const selectNode = useAppStore((s) => s.selectNode)
-  const { fitView } = useReactFlow()
-  const nodesInitialized = useNodesInitialized()
+  const { fitBounds, getNodesBounds } = useReactFlow()
 
-  // Re-frame whenever the view (graph) changes, once nodes are measured.
+  // Re-frame whenever the view (graph) changes. Bounds are computed from the
+  // nodes prop directly (every node has explicit width/height), so this never
+  // races React Flow's internal measurement.
   useEffect(() => {
-    if (!nodesInitialized) return
+    const bounds = getNodesBounds(nodes)
     const raf = requestAnimationFrame(() => {
-      void fitView({ duration: 600, padding: 0.06 })
+      void fitBounds(bounds, { duration: 600, padding: 0.06 })
     })
     return () => cancelAnimationFrame(raf)
-  }, [activeView, nodesInitialized, fitView])
+  }, [activeView, nodes, fitBounds, getNodesBounds])
 
   const onNodeClick = useCallback<NodeMouseHandler<AppNode>>(
     (_evt, node) => {
