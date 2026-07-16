@@ -765,3 +765,154 @@ button:focus-visible {
     padding: 8px 12px;
   }
 }
+
+/* ------------------------------ play mode -------------------------------- */
+
+.ticket-token {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #08121c;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent),
+    0 0 22px color-mix(in srgb, var(--accent) 70%, transparent);
+  offset-rotate: 0deg;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  pointer-events: none;
+}
+
+.ticket-token__id {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/* dim everything except the active stage while playing */
+.board-canvas.is-playing .stage-card:not(.is-selected),
+.board-canvas.is-playing .lane {
+  opacity: 0.45;
+  transition: opacity 0.4s ease;
+}
+
+.board-canvas.is-playing .stage-card.is-selected {
+  box-shadow:
+    0 12px 30px rgb(0 0 0 / 0.4),
+    0 0 0 2px color-mix(in srgb, var(--card-accent) 70%, transparent),
+    0 0 28px color-mix(in srgb, var(--card-accent) 35%, transparent);
+}
+
+.play-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin-bottom: 14px !important;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.play-controls__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--text-dim);
+  font-size: 11px;
+  padding: 7px 10px;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.play-controls__btn:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.play-controls__btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.play-controls__btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.play-controls__btn--main {
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface-raised));
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  color: var(--text);
+}
+
+.play-controls__label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.play-controls__dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 4px;
+}
+
+.play-controls__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.play-controls__dot:hover {
+  transform: scale(1.35);
+}
+
+.play-controls__dot.is-done {
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
+  border-color: transparent;
+}
+
+.play-controls__dot.is-active {
+  background: var(--accent);
+  border-color: transparent;
+  transform: scale(1.35);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.play-controls__speed {
+  min-width: 40px;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .play-controls__dots,
+  .play-controls__label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board-canvas.is-playing .stage-card:not(.is-selected),
+  .board-canvas.is-playing .lane {
+    transition: none;
+  }
+}

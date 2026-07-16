@@ -11,6 +11,8 @@ import {
 import type { AppEdge, AppNode } from '../../types/flow'
 import { useAppStore } from '../../store/useAppStore'
 import { Legend } from '../chrome/Legend'
+import { PlayControls } from '../chrome/PlayControls'
+import { PlayMode } from './PlayMode'
 import { nodeTypes } from './nodes'
 import { edgeTypes } from './edges'
 
@@ -47,6 +49,8 @@ export function BoardCanvas({ nodes, edges }: BoardCanvasProps) {
   const theme = useAppStore((s) => s.theme)
   const activeView = useAppStore((s) => s.activeView)
   const selectNode = useAppStore((s) => s.selectNode)
+  const playStatus = useAppStore((s) => s.playStatus)
+  const setPlay = useAppStore((s) => s.setPlay)
   const { fitBounds, getNodesBounds } = useReactFlow()
 
   // Re-frame whenever the view (graph) changes. Bounds are computed from the
@@ -69,8 +73,22 @@ export function BoardCanvas({ nodes, edges }: BoardCanvasProps) {
 
   const onPaneClick = useCallback(() => selectNode(null), [selectNode])
 
+  // Any user-initiated viewport move pauses playback.
+  const onMoveStart = useCallback(
+    (event: unknown) => {
+      if (event && useAppStore.getState().playStatus === 'playing') {
+        setPlay('paused')
+      }
+    },
+    [setPlay],
+  )
+
+  const playable = activeView === 'lifecycle'
+
   return (
-    <div className="board-canvas">
+    <div
+      className={`board-canvas${playStatus !== 'idle' ? ' is-playing' : ''}`}
+    >
       <ReactFlow<AppNode, AppEdge>
         nodes={nodes}
         edges={edges}
@@ -90,6 +108,7 @@ export function BoardCanvas({ nodes, edges }: BoardCanvasProps) {
         proOptions={{ hideAttribution: false }}
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
+        onMoveStart={onMoveStart}
       >
         <Background
           variant={BackgroundVariant.Dots}
@@ -108,6 +127,8 @@ export function BoardCanvas({ nodes, edges }: BoardCanvasProps) {
         />
         <Controls showInteractive={false} />
         <Legend />
+        {playable && <PlayControls />}
+        {playable && <PlayMode nodes={nodes} />}
       </ReactFlow>
     </div>
   )
