@@ -11,6 +11,7 @@ import {
 } from '@xyflow/react'
 import type { AppEdge, AppNode } from '../../types/flow'
 import { useAppStore } from '../../store/useAppStore'
+import { Legend } from '../chrome/Legend'
 import { nodeTypes } from './nodes'
 import { edgeTypes } from './edges'
 
@@ -106,6 +107,7 @@ export function BoardCanvas({ nodes, edges }: BoardCanvasProps) {
           nodeBorderRadius={4}
         />
         <Controls showInteractive={false} />
+        <Legend />
       </ReactFlow>
     </div>
   )

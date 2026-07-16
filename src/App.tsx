@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { ReactFlowProvider } from '@xyflow/react'
 import { BoardCanvas } from './components/board/BoardCanvas'
+import { DetailPanel } from './components/panel/DetailPanel'
 import { TopBar } from './components/chrome/TopBar'
 import { useTheme } from './hooks/useTheme'
 import { buildLifecycleGraph } from './layout/lifecycleLayout'
@@ -13,7 +14,10 @@ function App() {
     <ReactFlowProvider>
       <div className="app-shell">
         <TopBar />
-        <BoardCanvas nodes={nodes} edges={edges} />
+        <div className="board-area">
+          <BoardCanvas nodes={nodes} edges={edges} />
+          <DetailPanel />
+        </div>
       </div>
     </ReactFlowProvider>
   )
