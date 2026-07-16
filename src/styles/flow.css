@@ -1,0 +1,5 @@
+/* React Flow overrides + edge animation keyframes (filled in Phase 5) */
+
+.react-flow {
+  background: var(--bg-canvas);
+}
