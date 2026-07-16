@@ -1,5 +1,22 @@
+import { useMemo } from 'react'
+import { ReactFlowProvider } from '@xyflow/react'
+import { BoardCanvas } from './components/board/BoardCanvas'
+import { TopBar } from './components/chrome/TopBar'
+import { useTheme } from './hooks/useTheme'
+import { buildLifecycleGraph } from './layout/lifecycleLayout'
+
 function App() {
-  return <div className="app-shell">AMRIT SDLC Board</div>
+  useTheme()
+  const { nodes, edges } = useMemo(() => buildLifecycleGraph(), [])
+
+  return (
+    <ReactFlowProvider>
+      <div className="app-shell">
+        <TopBar />
+        <BoardCanvas nodes={nodes} edges={edges} />
+      </div>
+    </ReactFlowProvider>
+  )
 }
 
 export default App

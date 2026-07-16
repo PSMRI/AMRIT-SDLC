@@ -1,67 +1,66 @@
 /* ---------------------------------------------------------------------------
    AMRIT SDLC Board — global styles & theme tokens
-   Dark is the default theme; [data-theme='light'] overrides.
+   Engineering-blueprint direction: ink-navy canvas, IBM Plex voice,
+   four lane accents. Dark is default; [data-theme='light'] overrides.
 --------------------------------------------------------------------------- */
 
 :root {
   /* surfaces */
-  --bg: #0b0f14;
+  --bg: #0b0f15;
   --bg-canvas: #0d1219;
-  --surface: #141b24;
-  --surface-raised: #1a2330;
-  --border: #26303d;
-  --border-strong: #35414f;
+  --surface: #131a24;
+  --surface-raised: #182231;
+  --border: #253141;
+  --border-strong: #364457;
 
   /* text */
-  --text: #e8edf2;
-  --text-dim: #9aa7b4;
-  --text-faint: #66727f;
+  --text: #e9eef4;
+  --text-dim: #97a4b3;
+  --text-faint: #64707e;
 
-  /* accent */
-  --accent: #4fc3f7;
+  /* accent (edges, focus, packets) */
+  --accent: #6fb9e8;
 
   /* lane accents */
-  --lane-business: #f6a821;
-  --lane-engineering: #4f8ef7;
-  --lane-qa: #9d6ff2;
-  --lane-devops: #2fbf8f;
+  --lane-business: #e8a63d;
+  --lane-engineering: #5f8ff2;
+  --lane-qa: #a880f0;
+  --lane-devops: #3cbf96;
 
   /* semantic */
-  --rework: #ef5f6b;
-  --ok: #2fbf8f;
+  --rework: #e86a76;
+  --ok: #3cbf96;
 
-  --radius: 12px;
-  --shadow: 0 8px 28px rgb(0 0 0 / 0.45);
+  --radius: 10px;
+  --shadow: 0 10px 32px rgb(0 0 0 / 0.45);
 
-  --font-sans:
-    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
-    sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 }
 
 [data-theme='light'] {
-  --bg: #f4f6f9;
-  --bg-canvas: #eef1f5;
+  --bg: #f3f5f8;
+  --bg-canvas: #edf0f4;
   --surface: #ffffff;
   --surface-raised: #ffffff;
-  --border: #d8dee6;
-  --border-strong: #b9c2cd;
+  --border: #d5dce4;
+  --border-strong: #b4bfcc;
 
-  --text: #17222d;
-  --text-dim: #55626f;
-  --text-faint: #8b96a2;
+  --text: #16212e;
+  --text-dim: #52616f;
+  --text-faint: #8794a2;
 
-  --accent: #0277bd;
+  --accent: #1673b4;
 
-  --lane-business: #c77f00;
-  --lane-engineering: #2563eb;
-  --lane-qa: #7c3aed;
-  --lane-devops: #0e9f6e;
+  --lane-business: #b57a00;
+  --lane-engineering: #2f5fd0;
+  --lane-qa: #7443d6;
+  --lane-devops: #0d8f6c;
 
-  --rework: #dc2f3f;
-  --ok: #0e9f6e;
+  --rework: #cf3a48;
+  --ok: #0d8f6c;
 
-  --shadow: 0 8px 24px rgb(23 34 45 / 0.12);
+  --shadow: 0 10px 28px rgb(22 33 46 / 0.14);
 }
 
 * {
@@ -80,10 +79,237 @@ body {
   background: var(--bg);
   color: var(--text);
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mono {
+  font-family: var(--font-mono);
 }
 
 .app-shell {
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+/* ------------------------------- top bar -------------------------------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  z-index: 20;
+}
+
+.topbar__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.topbar__eyebrow {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--text-faint);
+}
+
+.topbar__title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 16px;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.icon-btn:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.icon-btn:active {
+  transform: scale(0.94);
+}
+
+.icon-btn:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ------------------------------ board area ------------------------------ */
+
+.board-canvas {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+/* -------------------------------- lanes --------------------------------- */
+
+.lane {
+  position: relative;
+  border: 1px solid
+    color-mix(in srgb, var(--lane-accent) 26%, transparent);
+  border-left: 3px solid var(--lane-accent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--lane-accent) 4%, transparent);
+}
+
+.lane__title {
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--lane-accent) 80%, var(--text-dim));
+}
+
+/* ------------------------------ stage cards ----------------------------- */
+
+.card {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--card-accent, var(--accent));
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.18);
+  transition:
+    transform 0.18s cubic-bezier(0.34, 1.4, 0.5, 1),
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  box-shadow:
+    0 10px 24px rgb(0 0 0 / 0.3),
+    0 0 0 1px color-mix(in srgb, var(--card-accent) 35%, transparent);
+}
+
+.card.is-selected {
+  border-color: color-mix(in srgb, var(--card-accent) 70%, transparent);
+  box-shadow:
+    0 10px 26px rgb(0 0 0 / 0.32),
+    0 0 0 2px color-mix(in srgb, var(--card-accent) 55%, transparent);
+}
+
+[data-theme='light'] .card {
+  box-shadow: 0 2px 8px rgb(22 33 46 / 0.08);
+}
+
+.stage-card {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px 11px;
+}
+
+.stage-card__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+}
+
+.stage-card__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--card-accent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--card-accent) 70%, transparent);
+}
+
+.stage-card__title {
+  margin: 4px 0 3px;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+.stage-card__summary {
+  margin: 0;
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: var(--text-dim);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.stage-card__footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stage-card__outputs {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+}
+
+.chip-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 5px;
+  border: 1px solid color-mix(in srgb, var(--card-accent, var(--accent)) 35%, var(--border));
+  color: color-mix(in srgb, var(--card-accent, var(--accent)) 75%, var(--text));
+  background: color-mix(in srgb, var(--card-accent, var(--accent)) 10%, transparent);
+  white-space: nowrap;
+}
+
+.chip--more {
+  border-style: dashed;
+  color: var(--text-faint);
+  background: transparent;
 }
