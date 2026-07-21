@@ -82,6 +82,29 @@ export interface Transition {
   label?: string
 }
 
+/**
+ * A hard gate on a stage transition: the ticket cannot move until the
+ * criteria are met, evidenced on the ticket, and signed off by the owner.
+ */
+export interface Gate {
+  /** `gate-<source>--<target>` */
+  id: string
+  source: StageId
+  target: StageId
+  title: string
+  /** Short label shown on the edge chip, e.g. "DoR" */
+  short: string
+  purpose: string
+  /** Role whose sign-off flips the status */
+  owner: RoleId
+  /** What must be true to pass */
+  criteria: string[]
+  /** Links/artifacts that must be on the ticket — no verbal sign-offs */
+  evidence: string[]
+  /** When (if ever) the gate may be relaxed */
+  waiver?: string
+}
+
 /* ------------------------- generic flow content --------------------------
    Used by the Git Flow / Incident / Agile views, which are simpler graphs
    of typed "info cards" connected by labeled edges.

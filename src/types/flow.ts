@@ -1,5 +1,5 @@
 import type { Edge, Node } from '@xyflow/react'
-import type { InfoNode, Lane, Role, Stage, Transition } from './content'
+import type { Gate, InfoNode, Lane, Role, Stage, Transition } from './content'
 
 export type StageNodeType = Node<{ stage: Stage }, 'stage'>
 export type LaneNodeType = Node<
@@ -21,7 +21,7 @@ export type AppNode =
   | LabelNodeType
 
 export type FlowEdgeType = Edge<
-  { kind: Transition['kind']; label?: string },
+  { kind: Transition['kind']; label?: string; gate?: Gate },
   'flow'
 >
 export type AppEdge = FlowEdgeType

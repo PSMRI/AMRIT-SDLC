@@ -959,3 +959,78 @@ button:focus-visible {
   border-radius: 8px;
   cursor: pointer;
 }
+
+/* ------------------------------ gate chips ------------------------------- */
+
+:root {
+  --gate: #d8b24a;
+}
+
+[data-theme='light'] {
+  --gate: #a07c14;
+}
+
+.gate-chip {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px 4px 7px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--gate) 55%, var(--border));
+  background: color-mix(in srgb, var(--gate) 12%, var(--surface));
+  color: color-mix(in srgb, var(--gate) 85%, var(--text));
+  cursor: pointer;
+  pointer-events: all;
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+  z-index: 5;
+}
+
+.gate-chip:hover {
+  border-color: color-mix(in srgb, var(--gate) 80%, transparent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--gate) 35%, transparent);
+}
+
+.gate-chip.is-selected {
+  border-color: var(--gate);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--gate) 45%, transparent),
+    0 0 16px color-mix(in srgb, var(--gate) 40%, transparent);
+}
+
+.gate-chip__icon {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}
+
+.gate-chip__icon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.gate-chip.is-selected .gate-chip__icon path {
+  fill: currentColor;
+}
+
+.gate-chip__label {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.panel-waiver {
+  margin: 0;
+  padding: 9px 11px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  border: 1px dashed color-mix(in srgb, var(--gate) 45%, var(--border));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--gate) 6%, transparent);
+}

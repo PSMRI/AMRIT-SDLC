@@ -1,5 +1,6 @@
 import type { LaneId } from '../types/content'
 import type { AppEdge, AppNode } from '../types/flow'
+import { gateByTransition } from '../data/lifecycle/gates'
 import { lanes } from '../data/lifecycle/lanes'
 import { stages } from '../data/lifecycle/stages'
 import { transitions } from '../data/lifecycle/transitions'
@@ -67,7 +68,14 @@ export function buildLifecycleGraph(): { nodes: AppNode[]; edges: AppEdge[] } {
     target: t.target,
     sourceHandle: t.kind === 'forward' ? 'r' : 'l',
     targetHandle: t.kind === 'forward' ? 'l' : 'r',
-    data: { kind: t.kind, label: t.label },
+    data: {
+      kind: t.kind,
+      label: t.label,
+      gate:
+        t.kind === 'forward'
+          ? gateByTransition.get(`${t.source}--${t.target}`)
+          : undefined,
+    },
   }))
 
   return { nodes: [...laneNodes, ...stageNodes], edges }

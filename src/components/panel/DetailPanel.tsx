@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import type { InfoNode, Role, RoleId, Stage } from '../../types/content'
+import type { Gate, InfoNode, Role, RoleId, Stage } from '../../types/content'
 import { laneById } from '../../data/lifecycle/lanes'
+import { gateById } from '../../data/lifecycle/gates'
 import { stageById, stages } from '../../data/lifecycle/stages'
 import { roleById } from '../../data/roles'
 import { agileNodes } from '../../data/agile'
@@ -17,6 +18,7 @@ type Resolved =
   | { kind: 'stage'; stage: Stage }
   | { kind: 'role'; role: Role }
   | { kind: 'info'; info: InfoNode }
+  | { kind: 'gate'; gate: Gate }
   | null
 
 function resolve(id: string | null): Resolved {
@@ -27,6 +29,8 @@ function resolve(id: string | null): Resolved {
     const role = roleById.get(id.slice(5) as RoleId)
     if (role) return { kind: 'role', role }
   }
+  const gate = gateById.get(id)
+  if (gate) return { kind: 'gate', gate }
   const info = infoById.get(id)
   if (info) return { kind: 'info', info }
   return null
@@ -186,6 +190,46 @@ function RoleContent({ role }: { role: Role }) {
   )
 }
 
+function GateContent({ gate }: { gate: Gate }) {
+  const from = stageById.get(gate.source)
+  const to = stageById.get(gate.target)
+  return (
+    <>
+      <header className="panel-head">
+        <span className="panel-head__eyebrow mono">
+          HARD GATE · {from?.title} → {to?.title}
+        </span>
+        <h3 className="panel-head__title">{gate.title}</h3>
+        <p className="panel-head__summary">{gate.purpose}</p>
+      </header>
+      <Section label="Gate owner — sign-off flips the status">
+        <RoleChips ids={[gate.owner]} />
+      </Section>
+      <Section label="Pass criteria">
+        <ul className="panel-list panel-list--gate">
+          {gate.criteria.map((c) => (
+            <li key={c}>{c}</li>
+          ))}
+        </ul>
+      </Section>
+      <Section label="Evidence on the ticket — no verbal sign-offs">
+        <ul className="panel-artifacts">
+          {gate.evidence.map((e) => (
+            <li key={e}>
+              <span className="panel-artifact__name">{e}</span>
+            </li>
+          ))}
+        </ul>
+      </Section>
+      {gate.waiver && (
+        <Section label="Waiver policy">
+          <p className="panel-waiver">{gate.waiver}</p>
+        </Section>
+      )}
+    </>
+  )
+}
+
 function InfoContent({ info }: { info: InfoNode }) {
   return (
     <>
@@ -268,6 +312,7 @@ export function DetailPanel() {
               <StageContent stage={resolved.stage} />
             )}
             {resolved.kind === 'role' && <RoleContent role={resolved.role} />}
+            {resolved.kind === 'gate' && <GateContent gate={resolved.gate} />}
             {resolved.kind === 'info' && <InfoContent info={resolved.info} />}
           </motion.div>
         </motion.aside>

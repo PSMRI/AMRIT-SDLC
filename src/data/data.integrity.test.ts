@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { gates } from './lifecycle/gates'
 import { lanes } from './lifecycle/lanes'
 import { stages } from './lifecycle/stages'
 import { transitions } from './lifecycle/transitions'
@@ -51,6 +52,34 @@ describe('lifecycle data', () => {
     }
     const forward = transitions.filter((t) => t.kind === 'forward')
     expect(forward).toHaveLength(11)
+  })
+})
+
+describe('gates data', () => {
+  it('every forward transition has exactly one gate', () => {
+    const forward = transitions.filter((t) => t.kind === 'forward')
+    expect(gates).toHaveLength(forward.length)
+    const keys = new Set(gates.map((g) => `${g.source}--${g.target}`))
+    for (const t of forward) {
+      expect(keys, `${t.source}→${t.target} missing gate`).toContain(
+        `${t.source}--${t.target}`,
+      )
+    }
+  })
+
+  it('gates reference valid stages/roles and have full content', () => {
+    const ids = new Set(gates.map((g) => g.id))
+    expect(ids.size).toBe(gates.length)
+    for (const g of gates) {
+      expect(g.id).toBe(`gate-${g.source}--${g.target}`)
+      expect(stageIds, g.id).toContain(g.source)
+      expect(stageIds, g.id).toContain(g.target)
+      expect(roleIds, `${g.id} owner`).toContain(g.owner)
+      expect(g.criteria.length, `${g.id} criteria`).toBeGreaterThan(0)
+      expect(g.evidence.length, `${g.id} evidence`).toBeGreaterThan(0)
+      expect(g.short.length, `${g.id} short`).toBeGreaterThan(0)
+      expect(g.purpose.length, `${g.id} purpose`).toBeGreaterThan(0)
+    }
   })
 })
 
