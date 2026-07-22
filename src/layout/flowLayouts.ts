@@ -28,11 +28,23 @@ function buildInfoGraph(
   edges: InfoEdge[],
   positions: Record<string, Pos>,
   extra: AppNode[] = [],
+  handleOverrides: Record<
+    string,
+    { sourceHandle: string; targetHandle: string }
+  > = {},
 ): { nodes: AppNode[]; edges: AppEdge[] } {
+  // Fail loudly on data/layout drift (e.g. a renamed node id) — a silent
+  // {0,0} fallback stacks cards on top of each other.
+  const pos = (id: string): Pos => {
+    const p = positions[id]
+    if (!p) throw new Error(`flowLayouts: no position for info node "${id}"`)
+    return p
+  }
+
   const appNodes: AppNode[] = nodes.map((info) => ({
     id: info.id,
     type: 'info',
-    position: positions[info.id] ?? { x: 0, y: 0 },
+    position: pos(info.id),
     data: { info },
     width: INFO_W,
     height: INFO_H,
@@ -40,14 +52,14 @@ function buildInfoGraph(
   }))
 
   const appEdges: AppEdge[] = edges.map((e) => {
-    const s = positions[e.source] ?? { x: 0, y: 0 }
-    const t = positions[e.target] ?? { x: 0, y: 0 }
+    const s = pos(e.source)
+    const t = pos(e.target)
     return {
       id: e.id,
       type: 'flow',
       source: e.source,
       target: e.target,
-      ...pickHandles(s, t),
+      ...(handleOverrides[e.id] ?? pickHandles(s, t)),
       data: { kind: e.kind, label: e.label },
     }
   })
@@ -101,20 +113,28 @@ export function buildGitflowGraph() {
 /* ------------------------------- incident -------------------------------- */
 
 export function buildIncidentGraph() {
+  // 430px columns leave a 180px gap so edge-label pills ("not resolvable
+  // at L1", "RCA insufficient", …) sit clear of the card edges.
+  const COL = 430
   const positions: Record<string, Pos> = {
     'inc-sources': { x: 0, y: 0 },
-    'inc-triage': { x: 360, y: 0 },
-    'inc-l2': { x: 720, y: 0 },
-    'inc-amm': { x: 1080, y: 0 },
-    'inc-p12': { x: 1440, y: -170 },
-    'inc-p34': { x: 1440, y: 170 },
-    'inc-fix': { x: 1800, y: 0 },
-    'inc-rca': { x: 2160, y: 0 },
-    'inc-capa': { x: 2520, y: 0 },
-    'inc-close': { x: 2880, y: 0 },
-    'inc-matrix': { x: 360, y: 300 },
+    'inc-triage': { x: COL, y: 0 },
+    'inc-l2': { x: COL * 2, y: 0 },
+    'inc-amm': { x: COL * 3, y: 0 },
+    'inc-critical': { x: COL * 4, y: -190 },
+    'inc-standard': { x: COL * 4, y: 190 },
+    'inc-fix': { x: COL * 5, y: 0 },
+    'inc-rca': { x: COL * 6, y: 0 },
+    'inc-capa': { x: COL * 7, y: 0 },
+    'inc-close': { x: COL * 8, y: 0 },
+    'inc-matrix': { x: 0, y: 320 },
   }
-  return buildInfoGraph(incidentNodes, incidentEdges, positions)
+  // Route the RCA-insufficient rework loop under the cards so it doesn't
+  // render on top of the forward Engineering Fix → RCA edge.
+  const handleOverrides = {
+    i10: { sourceHandle: 'b', targetHandle: 'b' },
+  }
+  return buildInfoGraph(incidentNodes, incidentEdges, positions, [], handleOverrides)
 }
 
 /* --------------------------------- agile ---------------------------------- */

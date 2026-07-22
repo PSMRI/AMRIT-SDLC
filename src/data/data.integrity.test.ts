@@ -7,6 +7,13 @@ import { roles } from './roles'
 import { agileEdges, agileNodes } from './agile'
 import { gitflowEdges, gitflowNodes } from './gitflow'
 import { incidentEdges, incidentNodes } from './incident'
+import {
+  buildAgileGraph,
+  buildGitflowGraph,
+  buildIncidentGraph,
+  buildRolesGraph,
+} from '../layout/flowLayouts'
+import { buildLifecycleGraph } from '../layout/lifecycleLayout'
 
 const laneIds = new Set(lanes.map((l) => l.id))
 const stageIds = new Set(stages.map((s) => s.id))
@@ -101,6 +108,27 @@ describe('roles data', () => {
       expect(laneIds, r.id).toContain(r.laneId)
       expect(r.deliverables.length, `${r.id} deliverables`).toBeGreaterThan(0)
       expect(r.responsibilities.length, `${r.id} resp`).toBeGreaterThan(0)
+    }
+  })
+})
+
+describe('layout builders', () => {
+  // buildInfoGraph throws when a data node id has no layout position —
+  // catches data/layout drift (e.g. renaming a node id in data only).
+  it.each([
+    ['lifecycle', buildLifecycleGraph],
+    ['gitflow', buildGitflowGraph],
+    ['incident', buildIncidentGraph],
+    ['agile', buildAgileGraph],
+    ['roles', buildRolesGraph],
+  ] as const)('%s builds with every node positioned', (_name, build) => {
+    const { nodes } = build()
+    expect(nodes.length).toBeGreaterThan(0)
+    const seen = new Set<string>()
+    for (const n of nodes) {
+      const key = `${n.position.x},${n.position.y}`
+      expect(seen.has(key), `nodes stacked at ${key}`).toBe(false)
+      seen.add(key)
     }
   })
 })
