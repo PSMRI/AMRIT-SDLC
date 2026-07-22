@@ -2,7 +2,9 @@ import type { InfoEdge, InfoNode } from '../types/content'
 
 /**
  * Incident response flow (SOP §9): Field/L1 → triage → L2 → AMM board →
- * Engineering fix (P1/P2 vs P3/P4) → QA verify → deploy → RCA before closure.
+ * Engineering fix (Blocker/Highest vs Medium & below) → QA verify → deploy →
+ * RCA before closure. Severities are JIRA priorities: Blocker · Highest ·
+ * Medium · Low · Lowest · Minor.
  */
 export const incidentNodes: InfoNode[] = [
   {
@@ -61,9 +63,9 @@ export const incidentNodes: InfoNode[] = [
     roles: ['l2-support'],
   },
   {
-    id: 'inc-p12',
+    id: 'inc-critical',
     kind: 'decision',
-    title: 'P1 / P2 — Critical',
+    title: 'Blocker / Highest',
     subtitle: 'hotfix or current sprint',
     detail: [
       'Triaged at daily standup or within SLA window',
@@ -73,11 +75,14 @@ export const incidentNodes: InfoNode[] = [
     roles: ['senior-developer', 'project-manager'],
   },
   {
-    id: 'inc-p34',
+    id: 'inc-standard',
     kind: 'decision',
-    title: 'P3 / P4 — Standard',
+    title: 'Medium & Below',
     subtitle: 'product backlog',
-    detail: ['Added to the backlog for future sprints'],
+    detail: [
+      'Medium · Low · Lowest · Minor',
+      'Added to the backlog for future sprints',
+    ],
     accentVar: '--lane-engineering',
     roles: ['product-manager', 'project-manager'],
   },
@@ -97,12 +102,12 @@ export const incidentNodes: InfoNode[] = [
     id: 'inc-rca',
     kind: 'check',
     title: 'RCA — Required Gate',
-    subtitle: 'before closure, P1–P4',
+    subtitle: 'before closure — every escalated incident',
     detail: [
       'Format: Root cause · Trigger · Impact · Fix · Preventive measures',
       'Owned by the resolving developer; L2/QA/Tech Lead support',
       'Reviewed by Tech Lead or QA Manager — revised if insufficient',
-      'Blameless post-mortems for P1; learnings → KB & retros',
+      'Blameless post-mortems for Blocker incidents; learnings → KB & retros',
     ],
     accentVar: '--lane-qa',
     roles: ['developer', 'qa-manager', 'tech-architect'],
@@ -155,10 +160,10 @@ export const incidentEdges: InfoEdge[] = [
   { id: 'i1', source: 'inc-sources', target: 'inc-triage', kind: 'forward' },
   { id: 'i2', source: 'inc-triage', target: 'inc-l2', kind: 'forward', label: 'not resolvable at L1' },
   { id: 'i3', source: 'inc-l2', target: 'inc-amm', kind: 'forward', label: 'code/system issue' },
-  { id: 'i4', source: 'inc-amm', target: 'inc-p12', kind: 'forward', label: 'P1 · P2' },
-  { id: 'i5', source: 'inc-amm', target: 'inc-p34', kind: 'forward', label: 'P3 · P4' },
-  { id: 'i6', source: 'inc-p12', target: 'inc-fix', kind: 'forward', label: 'hotfix / sprint' },
-  { id: 'i7', source: 'inc-p34', target: 'inc-fix', kind: 'forward', label: 'future sprint' },
+  { id: 'i4', source: 'inc-amm', target: 'inc-critical', kind: 'forward', label: 'Blocker · Highest' },
+  { id: 'i5', source: 'inc-amm', target: 'inc-standard', kind: 'forward', label: 'Medium & below' },
+  { id: 'i6', source: 'inc-critical', target: 'inc-fix', kind: 'forward', label: 'hotfix / sprint' },
+  { id: 'i7', source: 'inc-standard', target: 'inc-fix', kind: 'forward', label: 'future sprint' },
   { id: 'i8', source: 'inc-fix', target: 'inc-rca', kind: 'forward', label: 'QA verified' },
   { id: 'i9', source: 'inc-rca', target: 'inc-capa', kind: 'forward', label: 'production defect' },
   { id: 'i10', source: 'inc-rca', target: 'inc-fix', kind: 'rework', label: 'RCA insufficient' },

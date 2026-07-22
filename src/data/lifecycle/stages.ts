@@ -422,7 +422,7 @@ export const stages: Stage[] = [
       'Reopen with the failed acceptance criteria and evidence attached',
       'Tag the gap: requirement-gap / design-gap / implementation-gap',
       'Developer records a root-cause note before picking the fix up',
-      'Reprioritize: P1/P2 into the current sprint, else next sprint',
+      'Reprioritize: Blocker/Highest into the current sprint, else next sprint',
       'Track reopen count — ≥2 reopens escalate to the Tech Architect',
     ],
     inputs: [

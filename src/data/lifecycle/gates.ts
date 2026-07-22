@@ -147,7 +147,7 @@ export const gates: Gate[] = [
       'QA approval recorded on the ticket',
       'Closing comment names the resolution',
       'Production defects: CAPA document linked — corrective action (fix + data repair) and preventive action (process/test change)',
-      'RCA linked if the ticket came from an escalated incident (P1–P4)',
+      'RCA linked if the ticket came from an escalated incident',
     ],
     evidence: [
       'Closing comment with resolution',
@@ -221,7 +221,7 @@ export const gates: Gate[] = [
       'Defect gap-tagged: requirement-gap / design-gap / implementation-gap',
       'Reproduction steps and failed AC attached',
       'Developer root-cause note recorded',
-      'Priority set: P1/P2 into the current sprint, else next sprint',
+      'Priority set: Blocker/Highest into the current sprint, else next sprint',
       '≥2 reopens on the same ticket → escalated to Tech Architect and logged for the Monthly Quality Review',
     ],
     evidence: [
