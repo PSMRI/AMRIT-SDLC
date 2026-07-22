@@ -193,7 +193,7 @@ export const stages: Stage[] = [
     title: 'Pending QA',
     laneId: 'qa',
     summary: 'Development complete — ticket awaits QA testing.',
-    responsibleRoles: ['qa-tester', 'qa-manager'],
+    responsibleRoles: ['qa-tester'],
     actions: [
       'Queue ticket for testing; assign QA owner',
       'Prepare test cases: positive, negative, boundary, role-based',
@@ -217,7 +217,7 @@ export const stages: Stage[] = [
     laneId: 'qa',
     summary:
       'QA validates functionality against requirements — manual + automated tests.',
-    responsibleRoles: ['qa-tester', 'qa-manager'],
+    responsibleRoles: ['qa-tester'],
     actions: [
       'Execute manual & automated tests against acceptance criteria',
       'Cross-browser & cross-device runs (Android 8+, low RAM, patchy net)',
@@ -255,23 +255,23 @@ export const stages: Stage[] = [
     title: 'QA Approved',
     laneId: 'qa',
     summary:
-      'QA certifies the work meets quality standards — ready for deployment.',
-    responsibleRoles: ['qa-manager'],
+      'QA certifies the ticket meets quality standards — the tester approves it for deployment.',
+    responsibleRoles: ['qa-tester'],
     actions: [
-      'Review coverage, execution results, and open-defect status',
-      'Give final QA sign-off before environment deployments',
-      'Coordinate smoke-test & rollback plan with DevOps',
+      'Verify all planned test cases executed and passed',
+      'Confirm no critical/high-severity defects remain open',
+      'Approve the ticket for deployment',
     ],
     inputs: ['Test execution report', 'Defect status & regression results'],
     outputs: [
       {
-        name: 'QA sign-off',
-        ownerRole: 'qa-manager',
-        note: 'Gate: no critical/high bugs open',
+        name: 'QA approval',
+        ownerRole: 'qa-tester',
+        note: 'Per ticket — the QA Manager signs off at release level, not on individual tickets',
       },
     ],
     tools: ['JIRA', 'GitHub Actions', 'Jenkins'],
-    exitCriteria: ['QA Manager greenlights deployment'],
+    exitCriteria: ['Ticket QA-approved for deployment'],
   },
   {
     id: 'dev-deployed',

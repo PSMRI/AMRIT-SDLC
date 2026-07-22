@@ -111,7 +111,7 @@ export const gates: Gate[] = [
     title: 'Test Readiness',
     short: 'TEST READY',
     purpose: 'QA never waits on a broken or missing build.',
-    owner: 'qa-manager',
+    owner: 'qa-tester',
     criteria: [
       'Build deployed to the test environment and sanity-checked',
       'Test cases finalized (positive, negative, boundary, role-based)',
@@ -126,7 +126,7 @@ export const gates: Gate[] = [
     title: 'Quality Gate',
     short: 'QA PASS',
     purpose: 'The classic hard gate: nothing critical stays open.',
-    owner: 'qa-manager',
+    owner: 'qa-tester',
     criteria: [
       '100% of planned test cases executed',
       'Zero critical/high-severity defects open',
