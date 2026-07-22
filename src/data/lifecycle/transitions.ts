@@ -1,8 +1,8 @@
 import type { Transition } from '../../types/content'
-import { stages } from './stages'
+import { pathStages } from './stages'
 
-/** Forward chain generated from stage order, plus explicit rework loops. */
-const ordered = [...stages].sort((a, b) => a.order - b.order)
+/** Forward chain generated from happy-path stage order. */
+const ordered = [...pathStages].sort((a, b) => a.order - b.order)
 
 const forward: Transition[] = ordered.slice(0, -1).map((s, i) => {
   const next = ordered[i + 1]
@@ -14,34 +14,34 @@ const forward: Transition[] = ordered.slice(0, -1).map((s, i) => {
   }
 })
 
-// Meaningful gate labels on key forward hops
-const labels: Record<string, string> = {
-  'f-analysis--ready-for-dev': 'requirements signed off',
-  'f-in-development--pending-qa': 'PR merged · CI green',
-  'f-in-qa--qa-approved': 'all tests pass',
-  'f-uat-deployed--uat-approved': 'end-user sign-off',
-  'f-prod-deployed--closed': 'verified in production',
-}
-for (const t of forward) {
-  const label = labels[t.id]
-  if (label) t.label = label
-}
-
+/**
+ * Rework drains into the REOPENED state; the only way back onto the path is
+ * the forward re-entry into In Development (through the Re-triage gate).
+ */
 const rework: Transition[] = [
   {
-    id: 'r-in-qa--in-development',
+    id: 'r-in-qa--reopened',
     source: 'in-qa',
-    target: 'in-development',
+    target: 'reopened',
     kind: 'rework',
     label: 'defects found',
   },
   {
-    id: 'r-uat-deployed--in-development',
+    id: 'r-uat-deployed--reopened',
     source: 'uat-deployed',
-    target: 'in-development',
+    target: 'reopened',
     kind: 'rework',
     label: 'UAT feedback',
   },
 ]
 
-export const transitions: Transition[] = [...forward, ...rework]
+const reentry: Transition[] = [
+  {
+    id: 'f-reopened--in-development',
+    source: 'reopened',
+    target: 'in-development',
+    kind: 'forward',
+  },
+]
+
+export const transitions: Transition[] = [...forward, ...reentry, ...rework]

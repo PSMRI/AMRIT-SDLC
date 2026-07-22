@@ -110,7 +110,8 @@ export function buildIncidentGraph() {
     'inc-p34': { x: 1440, y: 170 },
     'inc-fix': { x: 1800, y: 0 },
     'inc-rca': { x: 2160, y: 0 },
-    'inc-close': { x: 2520, y: 0 },
+    'inc-capa': { x: 2520, y: 0 },
+    'inc-close': { x: 2880, y: 0 },
     'inc-matrix': { x: 360, y: 300 },
   }
   return buildInfoGraph(incidentNodes, incidentEdges, positions)

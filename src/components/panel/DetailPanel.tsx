@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import type { Gate, InfoNode, Role, RoleId, Stage } from '../../types/content'
 import { laneById } from '../../data/lifecycle/lanes'
 import { gateById } from '../../data/lifecycle/gates'
-import { stageById, stages } from '../../data/lifecycle/stages'
+import { pathStages, stageById } from '../../data/lifecycle/stages'
 import { roleById } from '../../data/roles'
 import { agileNodes } from '../../data/agile'
 import { gitflowNodes } from '../../data/gitflow'
@@ -94,8 +94,9 @@ function StageContent({ stage }: { stage: Stage }) {
     <>
       <header className="panel-head">
         <span className="panel-head__eyebrow mono">
-          STAGE {String(stage.order + 1).padStart(2, '0')}/{stages.length} ·{' '}
-          {lane?.title}
+          {stage.offPath
+            ? `REWORK STATE · ${lane?.title}`
+            : `STAGE ${String(stage.order + 1).padStart(2, '0')}/${pathStages.length} · ${lane?.title}`}
         </span>
         <h3 className="panel-head__title">{stage.title}</h3>
         <p className="panel-head__summary">{stage.summary}</p>

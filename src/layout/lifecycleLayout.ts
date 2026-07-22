@@ -2,7 +2,7 @@ import type { LaneId } from '../types/content'
 import type { AppEdge, AppNode } from '../types/flow'
 import { gateByTransition } from '../data/lifecycle/gates'
 import { lanes } from '../data/lifecycle/lanes'
-import { stages } from '../data/lifecycle/stages'
+import { pathStages, stages } from '../data/lifecycle/stages'
 import { transitions } from '../data/lifecycle/transitions'
 import {
   COL_GAP,
@@ -26,7 +26,7 @@ const laneRow: Record<LaneId, number> = {
  */
 export function buildLifecycleGraph(): { nodes: AppNode[]; edges: AppEdge[] } {
   const boardWidth =
-    stages.length * STAGE_W + (stages.length - 1) * COL_GAP
+    pathStages.length * STAGE_W + (pathStages.length - 1) * COL_GAP
 
   const laneNodes: AppNode[] = lanes.map((lane) => {
     const row = laneRow[lane.id]
@@ -52,7 +52,7 @@ export function buildLifecycleGraph(): { nodes: AppNode[]; edges: AppEdge[] } {
     id: stage.id,
     type: 'stage',
     position: {
-      x: stage.order * (STAGE_W + COL_GAP),
+      x: (stage.gridCol ?? stage.order) * (STAGE_W + COL_GAP),
       y: laneRow[stage.laneId] * LANE_H + (LANE_H - 16 - STAGE_H) / 2,
     },
     data: { stage },
@@ -61,14 +61,17 @@ export function buildLifecycleGraph(): { nodes: AppNode[]; edges: AppEdge[] } {
     draggable: false,
   }))
 
-  // Long rework loops route via bottom handles: they dive below the board
-  // instead of cutting vertically through the lanes (where the middle
-  // segment used to land exactly on a gate chip).
+  // Non-default edge routing:
+  //  - rework loops enter REOPENED from below (they run in the lane gap /
+  //    under the board instead of cutting vertically through gate chips)
+  //  - the re-entry rises vertically from REOPENED into In Development
   const handleOverrides: Record<
     string,
     { sourceHandle: string; targetHandle: string }
   > = {
-    'r-uat-deployed--in-development': { sourceHandle: 'b', targetHandle: 'b' },
+    'r-in-qa--reopened': { sourceHandle: 'b', targetHandle: 'b' },
+    'r-uat-deployed--reopened': { sourceHandle: 'b', targetHandle: 'b' },
+    'f-reopened--in-development': { sourceHandle: 't', targetHandle: 'b' },
   }
 
   const edges: AppEdge[] = transitions.map((t) => ({

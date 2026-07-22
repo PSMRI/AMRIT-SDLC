@@ -181,6 +181,27 @@ export const gates: Gate[] = [
     evidence: ['Release notes link', 'L1 notification', 'Sign-off record'],
   },
   {
+    id: 'gate-reopened--in-development',
+    source: 'reopened',
+    target: 'in-development',
+    title: 'Re-triage Gate',
+    short: 'RE-TRIAGE',
+    purpose:
+      'Reopening is triaged, not tossed back over the wall — and repeat reopens escalate.',
+    owner: 'scrum-master',
+    criteria: [
+      'Defect gap-tagged: requirement-gap / design-gap / implementation-gap',
+      'Reproduction steps and failed AC attached',
+      'Developer root-cause note recorded',
+      'Priority set: P1/P2 into the current sprint, else next sprint',
+      '≥2 reopens on the same ticket → escalated to Tech Architect and logged for the Monthly Quality Review',
+    ],
+    evidence: [
+      'Defect report link with gap tag',
+      'Reopen comment naming cause and priority',
+    ],
+  },
+  {
     id: 'gate-prod-deployed--closed',
     source: 'prod-deployed',
     target: 'closed',
@@ -193,8 +214,13 @@ export const gates: Gate[] = [
       'Monitoring clean for the agreed observation window',
       'Reporter / field team confirmed the resolution',
       'RCA linked if the ticket came from an escalated incident (P1–P4)',
+      'Production defects: CAPA document linked — corrective action (fix + data repair) and preventive action (process/test change)',
     ],
-    evidence: ['Smoke test result', 'Closing comment with verification'],
+    evidence: [
+      'Smoke test result',
+      'Closing comment with verification',
+      'CAPA document link (production defects)',
+    ],
   },
 ]
 

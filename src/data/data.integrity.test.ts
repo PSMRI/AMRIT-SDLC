@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { gates } from './lifecycle/gates'
 import { lanes } from './lifecycle/lanes'
-import { stages } from './lifecycle/stages'
+import { pathStages, stages } from './lifecycle/stages'
 import { transitions } from './lifecycle/transitions'
 import { roles } from './roles'
 import { agileEdges, agileNodes } from './agile'
@@ -13,10 +13,15 @@ const stageIds = new Set(stages.map((s) => s.id))
 const roleIds = new Set(roles.map((r) => r.id))
 
 describe('lifecycle data', () => {
-  it('has 12 stages with unique, contiguous order values', () => {
-    expect(stages).toHaveLength(12)
-    const orders = stages.map((s) => s.order).sort((a, b) => a - b)
+  it('has 12 happy-path stages with contiguous order, plus off-path states', () => {
+    expect(pathStages).toHaveLength(12)
+    const orders = pathStages.map((s) => s.order).sort((a, b) => a - b)
     expect(orders).toEqual(Array.from({ length: 12 }, (_, i) => i))
+    // off-path states must not collide with the path's order range
+    for (const s of stages.filter((x) => x.offPath)) {
+      expect(s.order).toBeGreaterThanOrEqual(pathStages.length)
+      expect(s.gridCol, `${s.id} needs a gridCol for layout`).toBeDefined()
+    }
   })
 
   it('every stage references a valid lane and valid roles', () => {
@@ -50,8 +55,13 @@ describe('lifecycle data', () => {
       expect(stageIds, t.id).toContain(t.source)
       expect(stageIds, t.id).toContain(t.target)
     }
+    // 11 happy-path hops + the REOPENED re-entry
     const forward = transitions.filter((t) => t.kind === 'forward')
-    expect(forward).toHaveLength(11)
+    expect(forward).toHaveLength(12)
+    // rework edges must drain into the REOPENED state
+    for (const t of transitions.filter((x) => x.kind === 'rework')) {
+      expect(t.target, t.id).toBe('reopened')
+    }
   })
 })
 

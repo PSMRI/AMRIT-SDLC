@@ -57,11 +57,19 @@ export type StageId =
   | 'uat-approved'
   | 'prod-deployed'
   | 'closed'
+  | 'reopened'
 
 export interface Stage {
   id: StageId
   /** 0-based position in the lifecycle; drives layout and play mode */
   order: number
+  /**
+   * True for states outside the happy path (e.g. REOPENED): excluded from
+   * the forward chain, play mode, and stage counts; rendered in alert tone.
+   */
+  offPath?: boolean
+  /** Layout column override for off-path states (defaults to `order`) */
+  gridCol?: number
   title: string
   laneId: LaneId
   /** One-liner shown on the card */

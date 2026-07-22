@@ -32,6 +32,7 @@ const MINIMAP_LANE_COLORS: Record<string, string> = {
 
 function minimapNodeColor(node: AppNode): string {
   if (node.type === 'lane') return 'transparent'
+  if (node.type === 'stage' && node.data.stage.offPath) return '#e86a76'
   const laneId =
     node.type === 'stage'
       ? node.data.stage.laneId

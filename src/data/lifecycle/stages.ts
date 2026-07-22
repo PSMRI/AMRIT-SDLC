@@ -21,7 +21,8 @@ export const stages: Stage[] = [
     inputs: [
       'Business need / feature request / bug report',
       'Field feedback (ASHAs, facility staff, state ops)',
-      'Escalations from L1/L2 support',
+      'Bugs escalated by L2 from the IHD Service Desk to the AMM product board',
+      'Production bugs arrive tagged as product defects — CAPA required at closure',
     ],
     outputs: [
       { name: 'JIRA ticket', ownerRole: 'project-manager' },
@@ -347,6 +348,48 @@ export const stages: Stage[] = [
     tools: ['JIRA', 'Confluence'],
     exitCriteria: ['Ticket closed with resolution comments'],
   },
+  {
+    id: 'reopened',
+    order: 12,
+    offPath: true,
+    gridCol: 3,
+    title: 'Reopened',
+    laneId: 'qa',
+    summary:
+      'The grave state: defects or requirement gaps sent the ticket back. Watched, measured, never routine.',
+    responsibleRoles: ['qa-tester', 'senior-developer', 'scrum-master'],
+    actions: [
+      'Reopen with the failed acceptance criteria and evidence attached',
+      'Tag the gap: requirement-gap / design-gap / implementation-gap',
+      'Developer records a root-cause note before picking the fix up',
+      'Reprioritize: P1/P2 into the current sprint, else next sprint',
+      'Track reopen count — ≥2 reopens escalate to the Tech Architect',
+    ],
+    inputs: [
+      'Failed test execution / defect report (In QA)',
+      'UAT feedback from end users',
+      'Desk-check or requirement mismatch found after Dev Done',
+    ],
+    outputs: [
+      {
+        name: 'Gap-tagged defect record',
+        ownerRole: 'qa-tester',
+        note: 'requirement / design / implementation',
+      },
+      {
+        name: 'Reopen-rate metric',
+        ownerRole: 'scrum-master',
+        note: 'Reviewed in the Monthly Quality Review',
+      },
+    ],
+    tools: ['JIRA'],
+    exitCriteria: [
+      'Passes the Re-triage gate and re-enters In Development',
+    ],
+  },
 ]
 
 export const stageById = new Map(stages.map((s) => [s.id, s]))
+
+/** The 12 happy-path stages — drives the forward chain, counts, play mode. */
+export const pathStages = stages.filter((s) => !s.offPath)

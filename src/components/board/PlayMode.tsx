@@ -24,9 +24,11 @@ export function PlayMode({ nodes }: { nodes: AppNode[] }) {
 
   const stageNodes = useMemo(
     () =>
-      (nodes.filter((n) => n.type === 'stage') as StageNodeType[]).sort(
-        (a, b) => a.data.stage.order - b.data.stage.order,
-      ),
+      (
+        nodes.filter(
+          (n) => n.type === 'stage' && !n.data.stage.offPath,
+        ) as StageNodeType[]
+      ).sort((a, b) => a.data.stage.order - b.data.stage.order),
     [nodes],
   )
 

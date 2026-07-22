@@ -9,14 +9,14 @@ export const incidentNodes: InfoNode[] = [
     id: 'inc-sources',
     kind: 'event',
     title: 'Incident Sources',
-    subtitle: 'JIRA Service Desk portal',
+    subtitle: 'IHD board · JIRA Service Desk',
     detail: [
       'Field users: ASHAs, lab techs, facility staff',
       'Operations team & L1 support',
-      'All routed through the Support Portal',
+      'Every bug lands on the IHD board (JIRA Service Desk) first',
     ],
     accentVar: '--lane-business',
-    tools: ['JIRA Service Desk'],
+    tools: ['JIRA Service Desk (IHD)'],
   },
   {
     id: 'inc-triage',
@@ -39,7 +39,7 @@ export const incidentNodes: InfoNode[] = [
     detail: [
       'Logs (ELK), DB & API health, backend/frontend/perf/infra',
       'Reproduce in test/staging',
-      'Code/system issue confirmed → escalate to engineering',
+      'Dev support required → L2 escalates from IHD to the AMM product board',
     ],
     accentVar: '--lane-devops',
     roles: ['l2-support'],
@@ -48,12 +48,14 @@ export const incidentNodes: InfoNode[] = [
   {
     id: 'inc-amm',
     kind: 'event',
-    title: 'AMM JIRA Board Handoff',
-    subtitle: 'engineering queue',
+    title: 'AMM Product Board Handoff',
+    subtitle: 'bug enters the ticket lifecycle',
     detail: [
-      'Linked to original Service Desk ticket',
+      'Linked to the original IHD Service Desk ticket',
       'Summary, replication steps + environment, error logs',
       'Priority + component labels, suggested RCA',
+      'Production bugs are logged as PRODUCT DEFECTS on the board',
+      'From here the bug follows the ticket lifecycle and its hard gates',
     ],
     accentVar: '--lane-engineering',
     roles: ['l2-support'],
@@ -106,6 +108,21 @@ export const incidentNodes: InfoNode[] = [
     roles: ['developer', 'qa-manager', 'tech-architect'],
   },
   {
+    id: 'inc-capa',
+    kind: 'check',
+    title: 'Product Defect · CAPA',
+    subtitle: 'production bugs only',
+    detail: [
+      'A production bug is a product-team failure — handled blamelessly, never silently',
+      'CAPA document required before closure:',
+      'Corrective Action — the fix itself plus repair of any affected data',
+      'Preventive Action — the process/test/gate change that stops this class of defect recurring',
+      'CAPAs reviewed in the Monthly Quality Review; recurring classes escalate',
+    ],
+    accentVar: '--rework',
+    roles: ['product-manager', 'qa-manager', 'tech-architect'],
+  },
+  {
     id: 'inc-close',
     kind: 'event',
     title: 'Close & Communicate',
@@ -143,8 +160,9 @@ export const incidentEdges: InfoEdge[] = [
   { id: 'i6', source: 'inc-p12', target: 'inc-fix', kind: 'forward', label: 'hotfix / sprint' },
   { id: 'i7', source: 'inc-p34', target: 'inc-fix', kind: 'forward', label: 'future sprint' },
   { id: 'i8', source: 'inc-fix', target: 'inc-rca', kind: 'forward', label: 'QA verified' },
-  { id: 'i9', source: 'inc-rca', target: 'inc-close', kind: 'forward', label: 'RCA approved' },
+  { id: 'i9', source: 'inc-rca', target: 'inc-capa', kind: 'forward', label: 'production defect' },
   { id: 'i10', source: 'inc-rca', target: 'inc-fix', kind: 'rework', label: 'RCA insufficient' },
+  { id: 'i11', source: 'inc-capa', target: 'inc-close', kind: 'forward', label: 'CAPA logged' },
 ]
 
 /** Responsibility matrix (verbatim from SOP §9). */

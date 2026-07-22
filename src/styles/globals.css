@@ -1034,3 +1034,16 @@ button:focus-visible {
   border-radius: 8px;
   background: color-mix(in srgb, var(--gate) 6%, transparent);
 }
+
+/* --------------------------- rework/alert state --------------------------- */
+
+.stage-card--alert {
+  border-style: dashed;
+  border-top-style: solid;
+  background: color-mix(in srgb, var(--rework) 5%, var(--surface));
+}
+
+.stage-card--alert .stage-card__eyebrow .mono {
+  color: var(--rework);
+  font-weight: 600;
+}

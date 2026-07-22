@@ -1,5 +1,5 @@
 import { Panel } from '@xyflow/react'
-import { stages } from '../../data/lifecycle/stages'
+import { pathStages as stages } from '../../data/lifecycle/stages'
 import { useAppStore } from '../../store/useAppStore'
 
 /** Media-scrubber-style playback controls for the lifecycle journey. */
