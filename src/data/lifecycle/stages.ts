@@ -1,10 +1,12 @@
 import type { Stage } from '../../types/content'
 
 /**
- * The AMRIT ticket lifecycle, from the AMRIT SDLC SOP
- * (Confluence: AMRIT space, "AMRIT Software Development Lifecycle", §4a
- * "Ticket Movement"). The BRD stage precedes JIRA: the 12 JIRA states run
- * Open → Closed, with REOPENED off-path.
+ * The AMRIT lifecycle, from the AMRIT SDLC SOP (Confluence: AMRIT space,
+ * "AMRIT Software Development Lifecycle", §4a "Ticket Movement").
+ * Two segments on one board: the per-ticket workflow (BRD → Closed — tickets
+ * close right after QA approval) and the release-level workflow (Release UAT
+ * → Release Approved → Production Release), tracked on a release ticket.
+ * REOPENED is off-path.
  */
 export const stages: Stage[] = [
   {
@@ -274,112 +276,19 @@ export const stages: Stage[] = [
     exitCriteria: ['Ticket QA-approved for deployment'],
   },
   {
-    id: 'dev-deployed',
-    order: 8,
-    title: 'Dev Env Deployed',
-    laneId: 'devops-env',
-    summary:
-      'Deployed to the development environment for validation by devs & stakeholders.',
-    responsibleRoles: ['senior-developer', 'tech-architect', 'devops-engineer'],
-    actions: [
-      'Deploy build via CI/CD pipeline to dev environment',
-      'Developers & stakeholders validate end-to-end behavior',
-      'Monitor logs and dashboards for anomalies',
-    ],
-    inputs: ['QA-approved build', 'CI/CD pipeline'],
-    outputs: [
-      { name: 'Dev-environment build', ownerRole: 'devops-engineer' },
-      { name: 'Validation notes', ownerRole: 'senior-developer' },
-    ],
-    tools: ['GitHub Actions', 'Jenkins', 'AWS EC2', 'ELK', 'Grafana'],
-    exitCriteria: ['Stakeholders approve promotion to UAT'],
-  },
-  {
-    id: 'uat-deployed',
-    order: 9,
-    title: 'UAT Env Deployed',
-    laneId: 'devops-env',
-    summary:
-      'Deployed to UAT for end-user validation — one release branch at a time.',
-    responsibleRoles: ['product-manager', 'l2-support', 'devops-engineer'],
-    actions: [
-      'Deploy release-X.Y.Z to UAT (only one release under test at a time)',
-      'Run Build Verification Testing (BVT) on core flows',
-      'End users & stakeholders run UAT scenarios from the BSA',
-    ],
-    inputs: [
-      'release-X.Y.Z build',
-      'UAT test scenarios (BSA)',
-      'BVT checklist',
-    ],
-    outputs: [
-      { name: 'UAT build', ownerRole: 'devops-engineer' },
-      { name: 'UAT feedback log', ownerRole: 'l2-support' },
-    ],
-    tools: ['JIRA', 'Firebase App Distribution', 'AWS'],
-    exitCriteria: ['BVT passed', 'End users complete UAT scenarios'],
-  },
-  {
-    id: 'uat-approved',
-    order: 10,
-    title: 'UAT Approved',
-    laneId: 'devops-env',
-    summary:
-      'End users and stakeholders approve — the release is production-ready.',
-    responsibleRoles: ['product-manager'],
-    actions: [
-      'Collect stakeholder approvals',
-      'Freeze release scope; generate release notes from JIRA (Fix Version)',
-      'Notify L1 support: features, fixes, known issues, areas to monitor',
-    ],
-    inputs: ['UAT feedback log', 'JIRA release (Fix Version)'],
-    outputs: [
-      { name: 'UAT approval', ownerRole: 'product-manager' },
-      {
-        name: 'Release notes',
-        ownerRole: 'product-manager',
-        note: 'Business-logic notes from BSA included',
-      },
-      { name: 'L1 pre-release notification', ownerRole: 'l2-support' },
-    ],
-    tools: ['JIRA', 'Confluence'],
-    exitCriteria: ['Sign-off recorded; production deployment scheduled'],
-  },
-  {
-    id: 'prod-deployed',
-    order: 11,
-    title: 'Production Deployed',
-    laneId: 'devops-env',
-    summary: 'Live for end users — deployed, tagged, and monitored.',
-    responsibleRoles: ['senior-developer', 'l2-support', 'devops-engineer'],
-    actions: [
-      'DevOps performs production deployment with rollback plan ready',
-      'Merge release-X.Y.Z into main; tag with SemVer (e.g. v3.3.0)',
-      'Smoke-test in production; monitor dashboards & error rates',
-      'Mobile: promote from Play internal testing track to production',
-    ],
-    inputs: ['UAT-approved release', 'Deployment & rollback runbook'],
-    outputs: [
-      { name: 'Production release (tagged)', ownerRole: 'devops-engineer' },
-      { name: 'Post-release monitoring report', ownerRole: 'l2-support' },
-    ],
-    tools: ['GitHub', 'Jenkins', 'AWS', 'Prometheus', 'Grafana', 'Play Console'],
-    exitCriteria: ['Deployment verified healthy in production'],
-  },
-  {
     id: 'closed',
-    order: 12,
+    order: 8,
     title: 'Closed',
     laneId: 'business-product',
     summary:
-      'Resolved and closed after successful deployment and verification.',
+      'QA approved — the ticket is closed. Once every ticket in the release is closed, the release moves on.',
     responsibleRoles: ['project-manager'],
     actions: [
-      'Verify resolution with the reporter / field teams',
-      'Close the JIRA ticket with closing comments',
-      'Archive the JIRA release version; feed learnings to retrospective',
+      'Close the JIRA ticket with closing comments once QA approves',
+      'Link CAPA for production defects; RCA for escalated incidents',
+      'Ticket counts toward its release (Fix Version) readiness',
     ],
-    inputs: ['Verified production release', 'Post-release monitoring'],
+    inputs: ['QA approval on the ticket', 'Defect status (all clear)'],
     outputs: [
       { name: 'Closed ticket', ownerRole: 'project-manager' },
       {
@@ -389,11 +298,119 @@ export const stages: Stage[] = [
       },
     ],
     tools: ['JIRA', 'Confluence'],
-    exitCriteria: ['Ticket closed with resolution comments'],
+    exitCriteria: [
+      'Ticket closed with resolution comments',
+      'All tickets in the Fix Version closed → release ready for UAT',
+    ],
+  },
+  {
+    id: 'release-uat',
+    order: 9,
+    scope: 'release',
+    title: 'Release UAT',
+    laneId: 'devops-env',
+    summary:
+      'All tickets closed — a release ticket is cut and the release goes to the Ops team for UAT.',
+    responsibleRoles: ['project-manager', 'l2-support', 'devops-engineer'],
+    actions: [
+      'Create the release ticket — tracks progress and captures every approval',
+      'Project Manager shares the full ticket list & release notes with Ops',
+      'Deploy release-X.Y.Z to UAT (one release under test at a time)',
+      'Ops runs BVT on core flows, then the UAT scenarios from the BSA',
+    ],
+    inputs: [
+      'All tickets in the Fix Version closed',
+      'Release notes (from JIRA Fix Version + BSA business notes)',
+      'UAT test scenarios (BSA)',
+    ],
+    outputs: [
+      {
+        name: 'Release ticket',
+        ownerRole: 'project-manager',
+        note: 'Single place for progress, approvals, and checklists',
+      },
+      { name: 'UAT build', ownerRole: 'devops-engineer' },
+      { name: 'UAT feedback log', ownerRole: 'l2-support' },
+    ],
+    tools: ['JIRA', 'Firebase App Distribution', 'AWS'],
+    exitCriteria: [
+      'BVT passed; Ops completes UAT scenarios',
+      'UAT feedback resolved or explicitly logged for a later release',
+    ],
+  },
+  {
+    id: 'release-approved',
+    order: 10,
+    scope: 'release',
+    title: 'Release Approved',
+    laneId: 'qa',
+    summary:
+      'Final approvals on the release ticket — QA Manager, Ops (L1), and Tech Architect sign off.',
+    responsibleRoles: ['qa-manager', 'l2-support', 'tech-architect'],
+    actions: [
+      'QA Manager records the release-level QA sign-off',
+      'Ops (L1) and Tech Architect record their approvals',
+      'Plan the deployment with DevOps & IT: window, owners, rollback',
+      'Attach pre- and post-deployment checklists to the release ticket',
+    ],
+    inputs: ['UAT-approved release', 'UAT feedback log with dispositions'],
+    outputs: [
+      {
+        name: 'Release approvals',
+        ownerRole: 'qa-manager',
+        note: 'QA Manager + Ops (L1) + Tech Architect, captured on the release ticket',
+      },
+      {
+        name: 'Pre/post-deployment checklists',
+        ownerRole: 'devops-engineer',
+        note: 'Attached to the release ticket',
+      },
+      { name: 'Deployment plan & window', ownerRole: 'project-manager' },
+    ],
+    tools: ['JIRA', 'Confluence'],
+    exitCriteria: [
+      'All three approvals recorded on the release ticket',
+      'Deployment scheduled with DevOps & IT',
+    ],
+  },
+  {
+    id: 'prod-release',
+    order: 11,
+    scope: 'release',
+    title: 'Production Release',
+    laneId: 'devops-env',
+    summary:
+      'Live for end users — deployed against the checklist, tagged, verified, and monitored.',
+    responsibleRoles: ['devops-engineer', 'senior-developer', 'l2-support'],
+    actions: [
+      'Execute the pre-deployment checklist; deploy with rollback ready',
+      'Merge release-X.Y.Z into main; tag with SemVer (e.g. v3.3.0)',
+      'Smoke-test in production; complete the post-deployment checklist',
+      'Mobile: promote from Play internal testing track to production',
+    ],
+    inputs: [
+      'Approved release ticket (all sign-offs)',
+      'Pre/post-deployment checklists',
+      'Deployment & rollback runbook',
+    ],
+    outputs: [
+      { name: 'Production release (tagged)', ownerRole: 'devops-engineer' },
+      {
+        name: 'Completed deployment checklists',
+        ownerRole: 'devops-engineer',
+        note: 'On the release ticket',
+      },
+      { name: 'Post-release monitoring report', ownerRole: 'l2-support' },
+    ],
+    tools: ['GitHub', 'Jenkins', 'AWS', 'Prometheus', 'Grafana', 'Play Console'],
+    exitCriteria: [
+      'Deployment verified healthy in production',
+      'Release ticket closed with checklists complete',
+    ],
   },
   {
     id: 'reopened',
-    order: 13,
+    order: 12,
     offPath: true,
     gridCol: 4,
     title: 'Reopened',
@@ -434,5 +451,5 @@ export const stages: Stage[] = [
 
 export const stageById = new Map(stages.map((s) => [s.id, s]))
 
-/** The 13 happy-path stages (BRD → Closed) — drives the forward chain, counts, play mode. */
+/** The 12 happy-path stages (BRD → Production Release) — drives the forward chain, counts, play mode. */
 export const pathStages = stages.filter((s) => !s.offPath)

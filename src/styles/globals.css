@@ -784,6 +784,22 @@ button:focus-visible {
   transform: translate(-50%, -50%);
   z-index: 50;
   pointer-events: none;
+  animation: token-pulse 1.6s ease-in-out infinite;
+}
+
+/* keep the token visibly alive while it dwells on a stage */
+@keyframes token-pulse {
+  50% {
+    box-shadow:
+      0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent),
+      0 0 30px color-mix(in srgb, var(--accent) 85%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket-token {
+    animation: none;
+  }
 }
 
 .ticket-token__id {
@@ -1033,6 +1049,20 @@ button:focus-visible {
   border: 1px dashed color-mix(in srgb, var(--gate) 45%, var(--border));
   border-radius: 8px;
   background: color-mix(in srgb, var(--gate) 6%, transparent);
+}
+
+/* --------------------------- release workflow ---------------------------- */
+
+.release-zone {
+  border: 1.5px dashed color-mix(in srgb, var(--lane-devops) 45%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--lane-devops) 4%, transparent);
+  pointer-events: none;
+}
+
+.stage-card--release .stage-card__eyebrow .mono {
+  color: var(--lane-devops);
+  font-weight: 600;
 }
 
 /* --------------------------- rework/alert state --------------------------- */

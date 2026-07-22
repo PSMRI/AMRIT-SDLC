@@ -96,7 +96,7 @@ function StageContent({ stage }: { stage: Stage }) {
         <span className="panel-head__eyebrow mono">
           {stage.offPath
             ? `REWORK STATE · ${lane?.title}`
-            : `STAGE ${String(stage.order + 1).padStart(2, '0')}/${pathStages.length} · ${lane?.title}`}
+            : `${stage.scope === 'release' ? 'RELEASE STAGE' : 'STAGE'} ${String(stage.order + 1).padStart(2, '0')}/${pathStages.length} · ${lane?.title}`}
         </span>
         <h3 className="panel-head__title">{stage.title}</h3>
         <p className="panel-head__summary">{stage.summary}</p>

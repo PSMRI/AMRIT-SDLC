@@ -13,10 +13,10 @@ const stageIds = new Set(stages.map((s) => s.id))
 const roleIds = new Set(roles.map((r) => r.id))
 
 describe('lifecycle data', () => {
-  it('has 13 happy-path stages with contiguous order, plus off-path states', () => {
-    expect(pathStages).toHaveLength(13)
+  it('has 12 happy-path stages with contiguous order, plus off-path states', () => {
+    expect(pathStages).toHaveLength(12)
     const orders = pathStages.map((s) => s.order).sort((a, b) => a - b)
-    expect(orders).toEqual(Array.from({ length: 13 }, (_, i) => i))
+    expect(orders).toEqual(Array.from({ length: 12 }, (_, i) => i))
     // off-path states must not collide with the path's order range
     for (const s of stages.filter((x) => x.offPath)) {
       expect(s.order).toBeGreaterThanOrEqual(pathStages.length)
@@ -55,9 +55,9 @@ describe('lifecycle data', () => {
       expect(stageIds, t.id).toContain(t.source)
       expect(stageIds, t.id).toContain(t.target)
     }
-    // 12 happy-path hops + the REOPENED re-entry
+    // 11 happy-path hops + the REOPENED re-entry
     const forward = transitions.filter((t) => t.kind === 'forward')
-    expect(forward).toHaveLength(13)
+    expect(forward).toHaveLength(12)
     // rework edges must drain into the REOPENED state
     for (const t of transitions.filter((x) => x.kind === 'rework')) {
       expect(t.target, t.id).toBe('reopened')

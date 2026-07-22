@@ -12,6 +12,7 @@ export type LabelNodeType = Node<
   { title: string; subtitle?: string },
   'label'
 >
+export type ZoneNodeType = Node<{ width: number; height: number }, 'zone'>
 
 export type AppNode =
   | StageNodeType
@@ -19,6 +20,7 @@ export type AppNode =
   | RoleNodeType
   | InfoNodeType
   | LabelNodeType
+  | ZoneNodeType
 
 export type FlowEdgeType = Edge<
   { kind: Transition['kind']; label?: string; gate?: Gate },

@@ -45,6 +45,19 @@ export function PlayMode({ nodes }: { nodes: AppNode[] }) {
     )
   }, [status, playIndex, stageNodes, selectNode, setCenter])
 
+  // While paused (scrubber dots, arrow keys), park the token on the active
+  // stage — otherwise it sits unpositioned at the flow origin.
+  useEffect(() => {
+    if (status !== 'paused') return
+    const cur = stageNodes[playIndex]
+    const token = tokenRef.current
+    if (!cur || !token) return
+    token.style.offsetPath = 'none'
+    token.style.offsetDistance = '0%'
+    token.style.left = `${cur.position.x + (cur.width ?? 0) - 14}px`
+    token.style.top = `${cur.position.y + (cur.height ?? 0) / 2 - 14}px`
+  }, [status, playIndex, stageNodes])
+
   // The playing loop: dwell on the stage, then travel to the next one.
   useEffect(() => {
     if (status !== 'playing') return

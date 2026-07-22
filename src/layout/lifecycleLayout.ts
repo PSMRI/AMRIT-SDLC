@@ -61,6 +61,55 @@ export function buildLifecycleGraph(): { nodes: AppNode[]; edges: AppEdge[] } {
     draggable: false,
   }))
 
+  // Release-level segment: dashed zone band spanning all lanes, plus
+  // per-segment workflow labels above the board.
+  const releaseStages = pathStages.filter((s) => s.scope === 'release')
+  const extraNodes: AppNode[] = []
+  if (releaseStages.length > 0) {
+    const firstCol = Math.min(...releaseStages.map((s) => s.order))
+    const zoneX = firstCol * (STAGE_W + COL_GAP) - COL_GAP / 2
+    const zoneW = releaseStages.length * (STAGE_W + COL_GAP)
+    const zoneH = 4 * LANE_H - 16 + 28
+    extraNodes.push(
+      {
+        id: 'zone-release',
+        type: 'zone',
+        position: { x: zoneX, y: -14 },
+        data: { width: zoneW, height: zoneH },
+        width: zoneW,
+        height: zoneH,
+        zIndex: -5,
+        selectable: false,
+        draggable: false,
+        focusable: false,
+      },
+      {
+        id: 'lbl-ticket-workflow',
+        type: 'label',
+        position: { x: 0, y: -76 },
+        data: {
+          title: 'TICKET WORKFLOW',
+          subtitle: 'per ticket · closed right after QA approval',
+        },
+        draggable: false,
+        selectable: false,
+        zIndex: -5,
+      },
+      {
+        id: 'lbl-release-workflow',
+        type: 'label',
+        position: { x: zoneX + COL_GAP / 2, y: -76 },
+        data: {
+          title: 'RELEASE WORKFLOW',
+          subtitle: 'per release · tracked & approved on the release ticket',
+        },
+        draggable: false,
+        selectable: false,
+        zIndex: -5,
+      },
+    )
+  }
+
   // Non-default edge routing:
   //  - rework loops enter REOPENED from below (they run in the lane gap /
   //    under the board instead of cutting vertically through gate chips)
@@ -70,7 +119,7 @@ export function buildLifecycleGraph(): { nodes: AppNode[]; edges: AppEdge[] } {
     { sourceHandle: string; targetHandle: string }
   > = {
     'r-in-qa--reopened': { sourceHandle: 'b', targetHandle: 'b' },
-    'r-uat-deployed--reopened': { sourceHandle: 'b', targetHandle: 'b' },
+    'r-release-uat--reopened': { sourceHandle: 'b', targetHandle: 'b' },
     'f-reopened--in-development': { sourceHandle: 't', targetHandle: 'b' },
   }
 
@@ -95,5 +144,5 @@ export function buildLifecycleGraph(): { nodes: AppNode[]; edges: AppEdge[] } {
     },
   }))
 
-  return { nodes: [...laneNodes, ...stageNodes], edges }
+  return { nodes: [...laneNodes, ...extraNodes, ...stageNodes], edges }
 }

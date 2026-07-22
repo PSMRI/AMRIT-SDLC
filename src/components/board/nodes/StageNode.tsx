@@ -4,6 +4,7 @@ import type { StageNodeType } from '../../../types/flow'
 import { laneById } from '../../../data/lifecycle/lanes'
 import { roleById } from '../../../data/roles'
 import { pathStages } from '../../../data/lifecycle/stages'
+import { useAppStore } from '../../../store/useAppStore'
 
 /** Invisible 4-way handles so edges can attach on any side. */
 export function SideHandles() {
@@ -23,6 +24,10 @@ export function SideHandles() {
 
 function StageNodeInner({ data, selected }: NodeProps<StageNodeType>) {
   const { stage } = data
+  // Play mode focuses stages through the store (never via React Flow's click
+  // selection), so the spotlight must consider both.
+  const storeSelected = useAppStore((s) => s.selectedNodeId === stage.id)
+  const isSelected = selected || storeSelected
   const lane = laneById.get(stage.laneId)
   const accent = stage.offPath
     ? 'var(--rework)'
@@ -31,15 +36,17 @@ function StageNodeInner({ data, selected }: NodeProps<StageNodeType>) {
   return (
     <div
       className={`card stage-card${stage.offPath ? ' stage-card--alert' : ''}${
-        selected ? ' is-selected' : ''
-      }`}
+        stage.scope === 'release' ? ' stage-card--release' : ''
+      }${isSelected ? ' is-selected' : ''}`}
       style={{ '--card-accent': accent } as React.CSSProperties}
     >
       <div className="stage-card__eyebrow">
         <span className="mono">
           {stage.offPath
             ? 'REWORK STATE'
-            : `${String(stage.order + 1).padStart(2, '0')} / ${pathStages.length}`}
+            : `${stage.scope === 'release' ? 'RELEASE · ' : ''}${String(
+                stage.order + 1,
+              ).padStart(2, '0')} / ${pathStages.length}`}
         </span>
         <span className="stage-card__dot" aria-hidden="true" />
       </div>

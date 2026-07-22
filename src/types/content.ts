@@ -52,11 +52,10 @@ export type StageId =
   | 'pending-qa'
   | 'in-qa'
   | 'qa-approved'
-  | 'dev-deployed'
-  | 'uat-deployed'
-  | 'uat-approved'
-  | 'prod-deployed'
   | 'closed'
+  | 'release-uat'
+  | 'release-approved'
+  | 'prod-release'
   | 'reopened'
 
 export interface Stage {
@@ -70,6 +69,12 @@ export interface Stage {
   offPath?: boolean
   /** Layout column override for off-path states (defaults to `order`) */
   gridCol?: number
+  /**
+   * 'release' marks release-level stages: they track the release ticket
+   * (one per release), not individual work tickets. Rendered inside the
+   * release-workflow zone with distinct styling.
+   */
+  scope?: 'release'
   title: string
   laneId: LaneId
   /** One-liner shown on the card */

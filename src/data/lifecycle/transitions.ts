@@ -27,8 +27,8 @@ const rework: Transition[] = [
     label: 'defects found',
   },
   {
-    id: 'r-uat-deployed--reopened',
-    source: 'uat-deployed',
+    id: 'r-release-uat--reopened',
+    source: 'release-uat',
     target: 'reopened',
     kind: 'rework',
     label: 'UAT feedback',
