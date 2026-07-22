@@ -13,11 +13,12 @@ export const stages: Stage[] = [
     title: 'BRD',
     laneId: 'business-product',
     summary:
-      'Before any ticket exists — the Business Systems Analyst documents the business need in a BRD.',
+      'Before any ticket exists — the Business Systems Analyst documents the business need: BRD, functional specs, workflows.',
     responsibleRoles: ['bsa'],
     actions: [
       'Capture the business need from govt partners, field teams, or support',
       'Document as-is → to-be workflows, scope, and affected users',
+      'Produce functional specs, data mapping sheets, report formulas',
       'Review the BRD with the Product Manager and stakeholders',
     ],
     inputs: [
@@ -31,8 +32,19 @@ export const stages: Stage[] = [
         ownerRole: 'bsa',
         note: 'Business Requirement Document — reviewed with the Product Manager',
       },
+      {
+        name: 'FRD',
+        ownerRole: 'bsa',
+        note: 'Functional Requirement Document',
+      },
+      { name: 'Use case & workflow diagrams', ownerRole: 'bsa' },
+      {
+        name: 'Mapping sheets',
+        ownerRole: 'bsa',
+        note: 'Form fields → database',
+      },
     ],
-    tools: ['Confluence', 'Excel'],
+    tools: ['Confluence', 'Excel', 'dbdiagram.io'],
     exitCriteria: ['BRD reviewed and signed off by the Product Manager'],
   },
   {
@@ -45,11 +57,12 @@ export const stages: Stage[] = [
     responsibleRoles: ['product-manager'],
     actions: [
       'Create epics, stories, and tasks in JIRA from the signed-off BRD',
+      'Write INVEST-compliant user stories with acceptance criteria',
       'Tag module (Facility App, Sakhi App, Admin portal) and category',
       'Prioritize into the backlog',
     ],
     inputs: [
-      'Signed-off BRD',
+      'Signed-off BRD / FRD',
       'Bugs escalated by L2 from the IHD Service Desk enter here directly — no BRD',
       'Production bugs arrive tagged as product defects — CAPA required at closure',
     ],
@@ -57,6 +70,11 @@ export const stages: Stage[] = [
       {
         name: 'JIRA tickets (epics · stories · tasks)',
         ownerRole: 'product-manager',
+      },
+      {
+        name: 'PRD & user stories',
+        ownerRole: 'product-manager',
+        note: 'INVEST, with acceptance criteria',
       },
       {
         name: 'Prioritized backlog',
@@ -71,43 +89,42 @@ export const stages: Stage[] = [
     id: 'analysis',
     order: 2,
     title: 'Analysis',
-    laneId: 'business-product',
+    laneId: 'engineering',
     summary:
-      'Requirements and scope are analyzed — business needs, technical specs, feasibility.',
-    responsibleRoles: ['bsa', 'product-manager'],
+      'Engineering analysis — devs and the Tech Architect design the solution; QA drafts test cases.',
+    responsibleRoles: ['tech-architect', 'senior-developer', 'qa-tester'],
     actions: [
-      'Gather business requirements and map as-is → to-be workflows',
-      'Write INVEST-compliant user stories with acceptance criteria',
-      'Produce functional specs, data mapping sheets, report formulas',
-      'Feasibility check with Tech Architect; groom with dev & QA',
+      'Feasibility & impact analysis: impacted modules, APIs, DB changes',
+      'Write HLD/LLD; Tech Architect reviews and approves the design',
+      'QA drafts test cases from the acceptance criteria; dev reviews them',
+      'Three Amigos (BSA + Dev + QA) — intent, approach, and proof agreed',
     ],
     inputs: [
-      'JIRA tickets + signed-off BRD',
-      'Govt health program guidelines (RCH, NCD, TB, Immunization)',
-      'Stakeholder interviews & field workflows',
+      'JIRA tickets with acceptance criteria (PRD / user stories)',
+      'Signed-off BRD / FRD and workflow diagrams',
+      'Architecture guidance & design patterns',
     ],
     outputs: [
       {
-        name: 'FRD',
-        ownerRole: 'bsa',
-        note: 'Functional Requirement Document',
-      },
-      { name: 'Use case & workflow diagrams', ownerRole: 'bsa' },
-      {
-        name: 'Mapping sheets',
-        ownerRole: 'bsa',
-        note: 'Form fields → database',
+        name: 'HLD / LLD',
+        ownerRole: 'tech-architect',
+        note: 'Linked on the ticket; design review recorded',
       },
       {
-        name: 'PRD & user stories',
-        ownerRole: 'product-manager',
-        note: 'INVEST, with acceptance criteria',
+        name: 'Impact analysis',
+        ownerRole: 'senior-developer',
+        note: 'Impacted modules, APIs, and DB changes',
+      },
+      {
+        name: 'Test cases drafted from AC',
+        ownerRole: 'qa-tester',
+        note: 'Reviewed by the developer',
       },
     ],
-    tools: ['Confluence', 'JIRA', 'Excel', 'dbdiagram.io'],
+    tools: ['Confluence', 'JIRA', 'dbdiagram.io', 'Swagger'],
     exitCriteria: [
-      'Requirements documented and signed off',
-      'Acceptance criteria defined for every story',
+      'Design reviewed and approved by the Tech Architect',
+      'QA test cases drafted and dev-reviewed',
     ],
   },
   {
@@ -116,18 +133,16 @@ export const stages: Stage[] = [
     title: 'Ready for Development',
     laneId: 'engineering',
     summary:
-      'Reviewed and approved for development — all prerequisites finalized.',
-    responsibleRoles: ['project-manager', 'tech-architect'],
+      'The holding bay — design and test cases done, the ticket waits to be pulled into a sprint.',
+    responsibleRoles: ['project-manager', 'developer'],
     actions: [
-      'Verify design documents and acceptance criteria are complete',
+      'Verify all DoR artifacts are linked: FRD, HLD/LLD, QA-reviewed test cases',
       'Estimate with story points (1–3 small · 5–8 medium · 13+ large)',
-      'Pull into sprint at sprint planning; set sprint goal',
-      'Tech Architect confirms approach & component design',
+      'Prioritize within the release; pull into sprint at sprint planning',
     ],
     inputs: [
-      'FRD, user stories, acceptance criteria',
-      'Architecture guidance & design patterns',
-      'Groomed, estimated backlog',
+      'DoR-complete ticket (design + test cases attached)',
+      'Release plan & sprint capacity',
     ],
     outputs: [
       {
@@ -135,13 +150,9 @@ export const stages: Stage[] = [
         ownerRole: 'project-manager',
         note: 'Estimated, prioritized, dependency-free',
       },
-      { name: 'Technical design notes', ownerRole: 'tech-architect' },
     ],
     tools: ['JIRA', 'Confluence'],
-    exitCriteria: [
-      'All prerequisites (design docs, acceptance criteria) finalized',
-      'Ticket assigned to a developer in the sprint',
-    ],
+    exitCriteria: ['Pulled into a sprint with an assignee set'],
   },
   {
     id: 'in-development',
