@@ -61,13 +61,27 @@ export function buildLifecycleGraph(): { nodes: AppNode[]; edges: AppEdge[] } {
     draggable: false,
   }))
 
+  // Long rework loops route via bottom handles: they dive below the board
+  // instead of cutting vertically through the lanes (where the middle
+  // segment used to land exactly on a gate chip).
+  const handleOverrides: Record<
+    string,
+    { sourceHandle: string; targetHandle: string }
+  > = {
+    'r-uat-deployed--in-development': { sourceHandle: 'b', targetHandle: 'b' },
+  }
+
   const edges: AppEdge[] = transitions.map((t) => ({
     id: t.id,
     type: 'flow',
     source: t.source,
     target: t.target,
-    sourceHandle: t.kind === 'forward' ? 'r' : 'l',
-    targetHandle: t.kind === 'forward' ? 'l' : 'r',
+    sourceHandle:
+      handleOverrides[t.id]?.sourceHandle ??
+      (t.kind === 'forward' ? 'r' : 'l'),
+    targetHandle:
+      handleOverrides[t.id]?.targetHandle ??
+      (t.kind === 'forward' ? 'l' : 'r'),
     data: {
       kind: t.kind,
       label: t.label,
