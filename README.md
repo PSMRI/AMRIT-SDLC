@@ -10,8 +10,8 @@ Source of truth: the *AMRIT Software Development Lifecycle* SOP on Confluence.
 
 | View | What it shows |
 | --- | --- |
-| **Ticket Lifecycle** | The 12-state ticket pipeline (Open → Closed) laid out in four swimlanes — Business & Product, Engineering, QA, IT/DevOps — with animated flow and rework edges. Press **▶ Follow a ticket** to watch a ticket travel the entire journey with camera follow. |
-| **Roles** | All 13 roles with responsibilities, deliverables, and tools, grouped by function. |
+| **Ticket Lifecycle** | The 13-stage ticket pipeline (BRD → Closed — the BRD precedes JIRA; the 12 JIRA states run Open → Closed) laid out in four swimlanes — Business & Product, Engineering, QA, IT/DevOps — with animated flow and rework edges. Press **▶ Follow a ticket** to watch a ticket travel the entire journey with camera follow. |
+| **Roles** | All 12 roles with responsibilities, deliverables, and tools, grouped by function. The Scrum Master function is a hat worn by the Project Manager. |
 | **Git & Releases** | Branching model (`main` / `release-X.Y.Z` / `feature|bugfix|hotfix`), the PR pipeline with CI gates, environments (dev/UAT/prod), and the mobile release track. |
 | **Incidents** | The L1 → L2 → AMM Engineering escalation flow, P1–P4 handling, and the RCA-before-closure gate. |
 | **Agile Cadence** | The 2-week sprint loop: grooming → planning → standups → work → review → retro. |

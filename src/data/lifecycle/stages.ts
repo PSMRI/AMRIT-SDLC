@@ -1,43 +1,75 @@
 import type { Stage } from '../../types/content'
 
 /**
- * The 12-state AMRIT ticket lifecycle, from the AMRIT SDLC SOP
+ * The AMRIT ticket lifecycle, from the AMRIT SDLC SOP
  * (Confluence: AMRIT space, "AMRIT Software Development Lifecycle", §4a
- * "Ticket Movement").
+ * "Ticket Movement"). The BRD stage precedes JIRA: the 12 JIRA states run
+ * Open → Closed, with REOPENED off-path.
  */
 export const stages: Stage[] = [
   {
-    id: 'open',
+    id: 'brd',
     order: 0,
-    title: 'Open',
+    title: 'BRD',
     laneId: 'business-product',
-    summary: 'Ticket is created and logged — a new need enters the system.',
-    responsibleRoles: ['project-manager', 'bsa'],
+    summary:
+      'Before any ticket exists — the Business Systems Analyst documents the business need in a BRD.',
+    responsibleRoles: ['bsa'],
     actions: [
-      'Log the ticket in JIRA with context and priority',
       'Capture the business need from govt partners, field teams, or support',
-      'Tag module (Facility App, Sakhi App, Admin portal) and category',
+      'Document as-is → to-be workflows, scope, and affected users',
+      'Review the BRD with the Product Manager and stakeholders',
     ],
     inputs: [
-      'Business need / feature request / bug report',
+      'Business need / feature request',
       'Field feedback (ASHAs, facility staff, state ops)',
-      'Bugs escalated by L2 from the IHD Service Desk to the AMM product board',
+      'Govt health program guidelines (RCH, NCD, TB, Immunization)',
+    ],
+    outputs: [
+      {
+        name: 'BRD',
+        ownerRole: 'bsa',
+        note: 'Business Requirement Document — reviewed with the Product Manager',
+      },
+    ],
+    tools: ['Confluence', 'Excel'],
+    exitCriteria: ['BRD reviewed and signed off by the Product Manager'],
+  },
+  {
+    id: 'open',
+    order: 1,
+    title: 'Open',
+    laneId: 'business-product',
+    summary:
+      'The Product Manager breaks the BRD into JIRA tickets — epics, stories, and tasks enter the backlog.',
+    responsibleRoles: ['product-manager'],
+    actions: [
+      'Create epics, stories, and tasks in JIRA from the signed-off BRD',
+      'Tag module (Facility App, Sakhi App, Admin portal) and category',
+      'Prioritize into the backlog',
+    ],
+    inputs: [
+      'Signed-off BRD',
+      'Bugs escalated by L2 from the IHD Service Desk enter here directly — no BRD',
       'Production bugs arrive tagged as product defects — CAPA required at closure',
     ],
     outputs: [
-      { name: 'JIRA ticket', ownerRole: 'project-manager' },
       {
-        name: 'Initial problem statement',
-        ownerRole: 'bsa',
-        note: 'Context, affected users, urgency',
+        name: 'JIRA tickets (epics · stories · tasks)',
+        ownerRole: 'product-manager',
+      },
+      {
+        name: 'Prioritized backlog',
+        ownerRole: 'product-manager',
+        note: 'Priority set with context: what, who is affected, urgency',
       },
     ],
     tools: ['JIRA', 'Confluence'],
-    exitCriteria: ['Ticket triaged and picked up for analysis'],
+    exitCriteria: ['Ticket triaged, prioritized, and picked up for analysis'],
   },
   {
     id: 'analysis',
-    order: 1,
+    order: 2,
     title: 'Analysis',
     laneId: 'business-product',
     summary:
@@ -50,13 +82,13 @@ export const stages: Stage[] = [
       'Feasibility check with Tech Architect; groom with dev & QA',
     ],
     inputs: [
-      'JIRA ticket + problem statement',
+      'JIRA tickets + signed-off BRD',
       'Govt health program guidelines (RCH, NCD, TB, Immunization)',
       'Stakeholder interviews & field workflows',
     ],
     outputs: [
       {
-        name: 'BRD / FRD',
+        name: 'FRD',
         ownerRole: 'bsa',
         note: 'Functional Requirement Document',
       },
@@ -80,12 +112,12 @@ export const stages: Stage[] = [
   },
   {
     id: 'ready-for-dev',
-    order: 2,
+    order: 3,
     title: 'Ready for Development',
     laneId: 'engineering',
     summary:
       'Reviewed and approved for development — all prerequisites finalized.',
-    responsibleRoles: ['scrum-master', 'tech-architect'],
+    responsibleRoles: ['project-manager', 'tech-architect'],
     actions: [
       'Verify design documents and acceptance criteria are complete',
       'Estimate with story points (1–3 small · 5–8 medium · 13+ large)',
@@ -100,7 +132,7 @@ export const stages: Stage[] = [
     outputs: [
       {
         name: 'Sprint-ready ticket',
-        ownerRole: 'scrum-master',
+        ownerRole: 'project-manager',
         note: 'Estimated, prioritized, dependency-free',
       },
       { name: 'Technical design notes', ownerRole: 'tech-architect' },
@@ -113,7 +145,7 @@ export const stages: Stage[] = [
   },
   {
     id: 'in-development',
-    order: 3,
+    order: 4,
     title: 'In Development',
     laneId: 'engineering',
     summary: 'Dev team implements the feature or fixes the issue.',
@@ -146,7 +178,7 @@ export const stages: Stage[] = [
   },
   {
     id: 'pending-qa',
-    order: 4,
+    order: 5,
     title: 'Pending QA',
     laneId: 'qa',
     summary: 'Development complete — ticket awaits QA testing.',
@@ -169,7 +201,7 @@ export const stages: Stage[] = [
   },
   {
     id: 'in-qa',
-    order: 5,
+    order: 6,
     title: 'In QA',
     laneId: 'qa',
     summary:
@@ -208,7 +240,7 @@ export const stages: Stage[] = [
   },
   {
     id: 'qa-approved',
-    order: 6,
+    order: 7,
     title: 'QA Approved',
     laneId: 'qa',
     summary:
@@ -232,7 +264,7 @@ export const stages: Stage[] = [
   },
   {
     id: 'dev-deployed',
-    order: 7,
+    order: 8,
     title: 'Dev Env Deployed',
     laneId: 'devops-env',
     summary:
@@ -253,7 +285,7 @@ export const stages: Stage[] = [
   },
   {
     id: 'uat-deployed',
-    order: 8,
+    order: 9,
     title: 'UAT Env Deployed',
     laneId: 'devops-env',
     summary:
@@ -278,7 +310,7 @@ export const stages: Stage[] = [
   },
   {
     id: 'uat-approved',
-    order: 9,
+    order: 10,
     title: 'UAT Approved',
     laneId: 'devops-env',
     summary:
@@ -304,7 +336,7 @@ export const stages: Stage[] = [
   },
   {
     id: 'prod-deployed',
-    order: 10,
+    order: 11,
     title: 'Production Deployed',
     laneId: 'devops-env',
     summary: 'Live for end users — deployed, tagged, and monitored.',
@@ -325,12 +357,12 @@ export const stages: Stage[] = [
   },
   {
     id: 'closed',
-    order: 11,
+    order: 12,
     title: 'Closed',
     laneId: 'business-product',
     summary:
       'Resolved and closed after successful deployment and verification.',
-    responsibleRoles: ['project-manager', 'scrum-master'],
+    responsibleRoles: ['project-manager'],
     actions: [
       'Verify resolution with the reporter / field teams',
       'Close the JIRA ticket with closing comments',
@@ -341,7 +373,7 @@ export const stages: Stage[] = [
       { name: 'Closed ticket', ownerRole: 'project-manager' },
       {
         name: 'Retro learnings',
-        ownerRole: 'scrum-master',
+        ownerRole: 'project-manager',
         note: 'Escalated incidents additionally require an RCA before closure',
       },
     ],
@@ -350,14 +382,14 @@ export const stages: Stage[] = [
   },
   {
     id: 'reopened',
-    order: 12,
+    order: 13,
     offPath: true,
-    gridCol: 3,
+    gridCol: 4,
     title: 'Reopened',
     laneId: 'qa',
     summary:
       'The grave state: defects or requirement gaps sent the ticket back. Watched, measured, never routine.',
-    responsibleRoles: ['qa-tester', 'senior-developer', 'scrum-master'],
+    responsibleRoles: ['qa-tester', 'senior-developer', 'project-manager'],
     actions: [
       'Reopen with the failed acceptance criteria and evidence attached',
       'Tag the gap: requirement-gap / design-gap / implementation-gap',
@@ -378,7 +410,7 @@ export const stages: Stage[] = [
       },
       {
         name: 'Reopen-rate metric',
-        ownerRole: 'scrum-master',
+        ownerRole: 'project-manager',
         note: 'Reviewed in the Monthly Quality Review',
       },
     ],
@@ -391,5 +423,5 @@ export const stages: Stage[] = [
 
 export const stageById = new Map(stages.map((s) => [s.id, s]))
 
-/** The 12 happy-path stages — drives the forward chain, counts, play mode. */
+/** The 13 happy-path stages (BRD → Closed) — drives the forward chain, counts, play mode. */
 export const pathStages = stages.filter((s) => !s.offPath)

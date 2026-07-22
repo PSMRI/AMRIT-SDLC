@@ -16,7 +16,7 @@ export const agileNodes: InfoNode[] = [
       'Story points: 1–3 small · 5–8 medium · 13+ large',
     ],
     accentVar: '--lane-business',
-    roles: ['product-manager', 'bsa', 'scrum-master'],
+    roles: ['product-manager', 'bsa', 'project-manager'],
   },
   {
     id: 'ag-planning',
@@ -30,7 +30,7 @@ export const agileNodes: InfoNode[] = [
       'Definition of done clarified',
     ],
     accentVar: '--lane-engineering',
-    roles: ['scrum-master', 'product-manager', 'developer'],
+    roles: ['project-manager', 'product-manager', 'developer'],
   },
   {
     id: 'ag-standup',
@@ -39,10 +39,10 @@ export const agileNodes: InfoNode[] = [
     subtitle: '~15 min, every day',
     detail: [
       'Yesterday · Today · Blockers',
-      'Scrum Master tracks and clears blockers',
+      'Project Manager (Scrum Master hat) runs it, tracks and clears blockers',
     ],
     accentVar: '--lane-engineering',
-    roles: ['scrum-master', 'developer', 'qa-tester'],
+    roles: ['project-manager', 'developer', 'qa-tester'],
   },
   {
     id: 'ag-work',
@@ -66,7 +66,7 @@ export const agileNodes: InfoNode[] = [
       'Feed acceptance results back into the backlog',
     ],
     accentVar: '--lane-business',
-    roles: ['product-manager', 'scrum-master', 'developer'],
+    roles: ['product-manager', 'project-manager', 'developer'],
   },
   {
     id: 'ag-retro',
@@ -75,11 +75,11 @@ export const agileNodes: InfoNode[] = [
     subtitle: 'continuous improvement',
     detail: [
       'What went well · What can improve · Action items',
-      'Scrum Master facilitates and tracks actions',
+      'Project Manager facilitates and tracks actions',
       'Feeds Monthly Quality Reviews & engineering guilds',
     ],
     accentVar: '--lane-devops',
-    roles: ['scrum-master'],
+    roles: ['project-manager'],
   },
 ]
 

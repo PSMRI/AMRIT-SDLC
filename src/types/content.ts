@@ -6,7 +6,6 @@
 export type RoleId =
   | 'bsa'
   | 'product-manager'
-  | 'scrum-master'
   | 'developer'
   | 'senior-developer'
   | 'senior-mobile-developer'
@@ -45,6 +44,7 @@ export interface Artifact {
 }
 
 export type StageId =
+  | 'brd'
   | 'open'
   | 'analysis'
   | 'ready-for-dev'

@@ -70,7 +70,7 @@ export const incidentNodes: InfoNode[] = [
       'Hotfixed from main, or prioritized into the running sprint',
     ],
     accentVar: '--rework',
-    roles: ['senior-developer', 'scrum-master'],
+    roles: ['senior-developer', 'project-manager'],
   },
   {
     id: 'inc-p34',
@@ -79,7 +79,7 @@ export const incidentNodes: InfoNode[] = [
     subtitle: 'product backlog',
     detail: ['Added to the backlog for future sprints'],
     accentVar: '--lane-engineering',
-    roles: ['product-manager', 'scrum-master'],
+    roles: ['product-manager', 'project-manager'],
   },
   {
     id: 'inc-fix',
@@ -145,9 +145,9 @@ export const incidentNodes: InfoNode[] = [
       'Engineering — root cause analysis, fix, QA, deployment',
       'QA — build verification, fix validation',
       'Release Manager — confirm fix deployment, update JIRA',
-      'Scrum Master / PO — sprint-level prioritization & comms',
+      'Project Manager / PO — sprint-level prioritization & comms',
     ],
-    roles: ['l2-support', 'qa-manager', 'scrum-master'],
+    roles: ['l2-support', 'qa-manager', 'project-manager'],
   },
 ]
 
@@ -172,5 +172,5 @@ export const incidentMatrix: Array<{ role: string; responsibility: string }> = [
   { role: 'Engineering', responsibility: 'Root cause analysis, fix, QA, deployment' },
   { role: 'QA', responsibility: 'Build verification, fix validation' },
   { role: 'Release Manager', responsibility: 'Confirm fix deployment and update JIRA' },
-  { role: 'Scrum Master / PO', responsibility: 'Sprint-level prioritization and communication' },
+  { role: 'Project Manager / PO', responsibility: 'Sprint-level prioritization and communication' },
 ]

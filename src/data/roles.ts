@@ -1,6 +1,10 @@
 import type { Role } from '../types/content'
 
-/** The 13 roles from the AMRIT SDLC SOP §3 "Roles & Responsibilities". */
+/**
+ * The 12 roles from the AMRIT SDLC SOP §3 "Roles & Responsibilities".
+ * The Scrum Master function is a hat worn by the Project Manager, not a
+ * separate person.
+ */
 export const roles: Role[] = [
   {
     id: 'bsa',
@@ -33,7 +37,9 @@ export const roles: Role[] = [
     description:
       'Owns product vision, roadmap, and backlog per module; the voice of the user in every sprint.',
     responsibilities: [
-      'Lead product planning & priorities',
+      'Create epics, stories & tasks in JIRA from the signed-off BRD',
+      'Own backlog prioritization',
+      'Plan releases jointly with the Project Manager',
       'Own product vision & roadmap; manage lifecycle concept → launch',
       'Write INVEST-compliant user stories with acceptance criteria',
       'Define & monitor KPIs; run user research',
@@ -42,31 +48,11 @@ export const roles: Role[] = [
     deliverables: [
       'Product roadmap',
       'PRD & prioritized backlog',
+      'Release plan (jointly with the Project Manager)',
       'User stories with acceptance criteria',
       'KPI / adoption dashboards',
     ],
     tools: ['JIRA', 'Confluence', 'Mixpanel'],
-  },
-  {
-    id: 'scrum-master',
-    name: 'Scrum Master',
-    abbreviation: 'SM',
-    laneId: 'engineering',
-    description:
-      'Keeps the 2-week sprint engine running — ceremonies, blockers, velocity, and continuous improvement.',
-    responsibilities: [
-      'Run standups, sprint planning, reviews, retrospectives',
-      'Unblock bottlenecks; escalate to PM / Tech Architect / PO',
-      'Monitor velocity, spillover, bug-to-feature ratio, cycle time',
-      'Maintain boards (JIRA)',
-      'Drive initiatives like Tech Debt Thursdays & bug bashes',
-    ],
-    deliverables: [
-      'Sprint plans & goals',
-      'Velocity / spillover reports',
-      'Retro action items',
-    ],
-    tools: ['JIRA', 'Confluence'],
   },
   {
     id: 'developer',
@@ -149,20 +135,23 @@ export const roles: Role[] = [
     abbreviation: 'PjM',
     laneId: 'business-product',
     description:
-      'Bridges tech, field, and leadership — delivery, scope, stakeholders, risks, and reporting.',
+      'Plans releases with the Product Manager and keeps them on track — and wears the Scrum Master hat: standups, ceremonies, and delivery reporting.',
     responsibilities: [
-      'Project delivery & scope management',
+      'Plan releases with the Product Manager; keep them on track',
+      'Act as Scrum Master: daily standups, sprint planning, reviews, retros',
+      'Unblock bottlenecks; monitor velocity, spillover, cycle time',
       'Stakeholder engagement (NHM, State Health Societies, funders)',
-      'Cross-functional coordination',
       'Quality & compliance assurance: QA sign-off before release',
       'Risk & issue management; progress tracking & reporting',
     ],
     deliverables: [
-      'Implementation roadmaps',
+      'Project plan (primary deliverable)',
+      'Sprint plans, velocity / spillover reports',
       'Status reports & trackers',
       'Escalation matrix',
+      'Retro action items',
     ],
-    tools: ['JIRA', 'Asana', 'Excel'],
+    tools: ['JIRA', 'Asana', 'Excel', 'Confluence'],
   },
   {
     id: 'l2-support',

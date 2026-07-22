@@ -12,18 +12,35 @@ import type { Gate } from '../../types/content'
  */
 export const gates: Gate[] = [
   {
+    id: 'gate-brd--open',
+    source: 'brd',
+    target: 'open',
+    title: 'BRD Sign-off',
+    short: 'BRD',
+    purpose: 'No tickets are cut from an unapproved requirement.',
+    owner: 'product-manager',
+    criteria: [
+      'BRD documents the need: what, who is affected, urgency',
+      'As-is → to-be workflows and scope reviewed with stakeholders',
+      'Product Manager has reviewed and accepted the BRD',
+    ],
+    evidence: ['BRD link (Confluence) with sign-off recorded'],
+    waiver:
+      'Bugs and production defects skip the BRD and enter directly at Open.',
+  },
+  {
     id: 'gate-open--analysis',
     source: 'open',
     target: 'analysis',
     title: 'Intake Gate',
     short: 'INTAKE',
     purpose: 'Only well-formed tickets enter analysis — no vague one-liners.',
-    owner: 'project-manager',
+    owner: 'product-manager',
     criteria: [
-      'Problem statement captured: what, who is affected, urgency',
+      'Feature tickets trace back to the signed-off BRD',
       'Module tagged (Facility App, Sakhi App, Admin portal)',
       'Category set: Bug / Enhancement / Infra',
-      'Priority assigned',
+      'Priority assigned in the backlog',
     ],
     evidence: ['JIRA ticket with all intake fields filled'],
   },
@@ -59,7 +76,7 @@ export const gates: Gate[] = [
     title: 'Sprint Commit',
     short: 'COMMIT',
     purpose: 'Work starts only inside a sprint, with a clear owner and branch.',
-    owner: 'scrum-master',
+    owner: 'project-manager',
     criteria: [
       'Story pointed (1–3 / 5–8 / 13+) and pulled in sprint planning',
       'Assignee set; no unresolved dependencies',
@@ -188,7 +205,7 @@ export const gates: Gate[] = [
     short: 'RE-TRIAGE',
     purpose:
       'Reopening is triaged, not tossed back over the wall — and repeat reopens escalate.',
-    owner: 'scrum-master',
+    owner: 'project-manager',
     criteria: [
       'Defect gap-tagged: requirement-gap / design-gap / implementation-gap',
       'Reproduction steps and failed AC attached',
