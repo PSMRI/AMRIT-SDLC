@@ -41,7 +41,7 @@ components never hardcode process text. When the SOP changes:
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173/amrit-sdlc-board/
+npm run dev        # http://localhost:5173/sdlc/
 npm run typecheck  # strict TS
 npm test           # data integrity tests (vitest)
 npm run build && npm run preview
@@ -50,8 +50,11 @@ npm run build && npm run preview
 ## Deployment
 
 Pushes to `main` trigger `.github/workflows/deploy.yml`: typecheck → tests →
-build → publish to GitHub Pages. One-time repo setting:
-**Settings → Pages → Source: GitHub Actions**.
+build → rsync `dist/` to the AMRIT tools server. Live at
+<https://amrittools.piramalswasthya.org/sdlc/>.
+
+Repo secrets used by the workflow: `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS`,
+`DEPLOY_USER`, `DEPLOY_HOST`.
 
 ---
 
