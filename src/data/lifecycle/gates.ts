@@ -58,12 +58,14 @@ export const gates: Gate[] = [
       'Acceptance criteria written and testable — QA has reviewed them',
       'HLD/LLD linked on the ticket and design review completed',
       'Impacted modules, APIs, and DB changes listed in the design doc',
+      'DB schema changes reviewed by the DBA (when the ticket touches the schema)',
       'QA test cases drafted from AC; developer has reviewed them',
       'Three Amigos held (BSA + Dev + QA) — intent, approach, and proof agreed',
     ],
     evidence: [
       'FRD link (Confluence)',
       'HLD/LLD link with architect approval recorded',
+      'DBA review note (schema changes)',
       'Test case link (reviewed by dev)',
     ],
     waiver:

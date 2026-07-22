@@ -94,10 +94,11 @@ export const stages: Stage[] = [
     laneId: 'engineering',
     summary:
       'Engineering analysis — devs and the Tech Architect design the solution; QA drafts test cases.',
-    responsibleRoles: ['tech-architect', 'senior-developer', 'qa-tester'],
+    responsibleRoles: ['tech-architect', 'senior-developer', 'qa-tester', 'dba'],
     actions: [
       'Feasibility & impact analysis: impacted modules, APIs, DB changes',
       'Write HLD/LLD; Tech Architect reviews and approves the design',
+      'DBA reviews proposed DB schema changes (when the ticket touches the schema)',
       'QA drafts test cases from the acceptance criteria; dev reviews them',
       'Three Amigos (BSA + Dev + QA) — intent, approach, and proof agreed',
     ],
@@ -121,6 +122,11 @@ export const stages: Stage[] = [
         name: 'Test cases drafted from AC',
         ownerRole: 'qa-tester',
         note: 'Reviewed by the developer',
+      },
+      {
+        name: 'DBA schema review',
+        ownerRole: 'dba',
+        note: 'Required when the ticket changes the DB schema',
       },
     ],
     tools: ['Confluence', 'JIRA', 'dbdiagram.io', 'Swagger'],
