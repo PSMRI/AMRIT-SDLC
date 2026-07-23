@@ -1,6 +1,15 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import type { Gate, InfoNode, Role, RoleId, Stage } from '../../types/content'
+import {
+  bulletGuide,
+  bulletText,
+  type Bullet,
+  type Gate,
+  type InfoNode,
+  type Role,
+  type RoleId,
+  type Stage,
+} from '../../types/content'
 import { laneById } from '../../data/lifecycle/lanes'
 import { gateById } from '../../data/lifecycle/gates'
 import { pathStages, stageById } from '../../data/lifecycle/stages'
@@ -57,6 +66,66 @@ function Section({
   )
 }
 
+/** Deep-dive content shown in the guidance modal. */
+interface GuideState {
+  kind: 'guidance' | 'template'
+  title: string
+  points: string[]
+}
+type OpenGuide = (g: GuideState) => void
+
+function GuideDot({
+  label,
+  onClick,
+}: {
+  label: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      className="guide-dot mono"
+      aria-label={label}
+      title={label}
+      onClick={onClick}
+    >
+      i
+    </button>
+  )
+}
+
+function BulletList({
+  items,
+  className,
+  onGuide,
+}: {
+  items: Bullet[]
+  className?: string
+  onGuide: OpenGuide
+}) {
+  return (
+    <ul className={`panel-list${className ? ` ${className}` : ''}`}>
+      {items.map((b) => {
+        const text = bulletText(b)
+        const guide = bulletGuide(b)
+        return (
+          <li key={text}>
+            {text}
+            {guide && (
+              <GuideDot
+                label={`Good practices: ${text}`}
+                onClick={() =>
+                  onGuide({ kind: 'guidance', title: text, points: guide })
+                }
+              />
+            )}
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
 function RoleChips({ ids }: { ids: RoleId[] }) {
   const setActiveView = useAppStore((s) => s.setActiveView)
   const selectNode = useAppStore((s) => s.selectNode)
@@ -88,7 +157,13 @@ function RoleChips({ ids }: { ids: RoleId[] }) {
   )
 }
 
-function StageContent({ stage }: { stage: Stage }) {
+function StageContent({
+  stage,
+  onGuide,
+}: {
+  stage: Stage
+  onGuide: OpenGuide
+}) {
   const lane = laneById.get(stage.laneId)
   return (
     <>
@@ -105,11 +180,7 @@ function StageContent({ stage }: { stage: Stage }) {
         <RoleChips ids={stage.responsibleRoles} />
       </Section>
       <Section label="Actions taken">
-        <ul className="panel-list">
-          {stage.actions.map((a) => (
-            <li key={a}>{a}</li>
-          ))}
-        </ul>
+        <BulletList items={stage.actions} onGuide={onGuide} />
       </Section>
       <Section label="Inputs">
         <ul className="panel-list panel-list--in">
@@ -122,7 +193,21 @@ function StageContent({ stage }: { stage: Stage }) {
         <ul className="panel-artifacts">
           {stage.outputs.map((o) => (
             <li key={o.name}>
-              <span className="panel-artifact__name">{o.name}</span>
+              <span className="panel-artifact__name">
+                {o.name}
+                {o.guide && (
+                  <GuideDot
+                    label={`Template: what the ${o.name} must contain`}
+                    onClick={() =>
+                      onGuide({
+                        kind: 'template',
+                        title: o.name,
+                        points: o.guide!,
+                      })
+                    }
+                  />
+                )}
+              </span>
               <span className="panel-artifact__meta mono">
                 {roleById.get(o.ownerRole)?.abbreviation}
                 {o.note ? ` · ${o.note}` : ''}
@@ -141,11 +226,11 @@ function StageContent({ stage }: { stage: Stage }) {
         </div>
       </Section>
       <Section label="Exit criteria">
-        <ul className="panel-list panel-list--gate">
-          {stage.exitCriteria.map((c) => (
-            <li key={c}>{c}</li>
-          ))}
-        </ul>
+        <BulletList
+          items={stage.exitCriteria}
+          className="panel-list--gate"
+          onGuide={onGuide}
+        />
       </Section>
     </>
   )
@@ -191,7 +276,13 @@ function RoleContent({ role }: { role: Role }) {
   )
 }
 
-function GateContent({ gate }: { gate: Gate }) {
+function GateContent({
+  gate,
+  onGuide,
+}: {
+  gate: Gate
+  onGuide: OpenGuide
+}) {
   const from = stageById.get(gate.source)
   const to = stageById.get(gate.target)
   return (
@@ -207,11 +298,11 @@ function GateContent({ gate }: { gate: Gate }) {
         <RoleChips ids={[gate.owner]} />
       </Section>
       <Section label="Pass criteria">
-        <ul className="panel-list panel-list--gate">
-          {gate.criteria.map((c) => (
-            <li key={c}>{c}</li>
-          ))}
-        </ul>
+        <BulletList
+          items={gate.criteria}
+          className="panel-list--gate"
+          onGuide={onGuide}
+        />
       </Section>
       <Section label="Evidence on the ticket — no verbal sign-offs">
         <ul className="panel-artifacts">
@@ -273,11 +364,23 @@ export function DetailPanel() {
   const selectedNodeId = useAppStore((s) => s.selectedNodeId)
   const selectNode = useAppStore((s) => s.selectNode)
   const resolved = resolve(selectedNodeId)
+  const [guide, setGuide] = useState<GuideState | null>(null)
+
+  // Selecting a different node dismisses any open guidance modal.
+  useEffect(() => {
+    setGuide(null)
+  }, [selectedNodeId])
 
   useEffect(() => {
     if (!resolved) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') selectNode(null)
+      if (e.key !== 'Escape') return
+      // Escape closes the guidance modal first, the panel second.
+      setGuide((g) => {
+        if (g) return null
+        selectNode(null)
+        return g
+      })
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -310,12 +413,58 @@ export function DetailPanel() {
             variants={{ show: { transition: { staggerChildren: 0.045 } } }}
           >
             {resolved.kind === 'stage' && (
-              <StageContent stage={resolved.stage} />
+              <StageContent stage={resolved.stage} onGuide={setGuide} />
             )}
             {resolved.kind === 'role' && <RoleContent role={resolved.role} />}
-            {resolved.kind === 'gate' && <GateContent gate={resolved.gate} />}
+            {resolved.kind === 'gate' && (
+              <GateContent gate={resolved.gate} onGuide={setGuide} />
+            )}
             {resolved.kind === 'info' && <InfoContent info={resolved.info} />}
           </motion.div>
+          <AnimatePresence>
+            {guide && (
+              <motion.div
+                className="guide-modal__backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                onClick={() => setGuide(null)}
+              >
+                <motion.div
+                  className="guide-modal"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label={guide.title}
+                  initial={{ opacity: 0, y: 14, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    className="guide-modal__close icon-btn"
+                    onClick={() => setGuide(null)}
+                    aria-label="Close guidance"
+                  >
+                    ×
+                  </button>
+                  <span className="guide-modal__eyebrow mono">
+                    {guide.kind === 'template'
+                      ? 'TEMPLATE · WHAT IT MUST CONTAIN'
+                      : 'GOOD PRACTICES · HOW TO DO THIS WELL'}
+                  </span>
+                  <h4 className="guide-modal__title">{guide.title}</h4>
+                  <ul className="guide-modal__list">
+                    {guide.points.map((p) => (
+                      <li key={p}>{p}</li>
+                    ))}
+                  </ul>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.aside>
       )}
     </AnimatePresence>

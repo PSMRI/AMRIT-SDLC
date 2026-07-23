@@ -37,10 +37,25 @@ export interface Role {
   tools: string[]
 }
 
+/**
+ * A checklist bullet. Attach a `guide` to surface deeper guidance in the UI
+ * (ⓘ → modal): what exactly to do or review, and the good practices behind
+ * it. Plain strings stay valid for bullets that need no elaboration.
+ */
+export type Bullet = string | { text: string; guide: string[] }
+
+export const bulletText = (b: Bullet): string =>
+  typeof b === 'string' ? b : b.text
+
+export const bulletGuide = (b: Bullet): string[] | undefined =>
+  typeof b === 'string' ? undefined : b.guide
+
 export interface Artifact {
   name: string
   ownerRole: RoleId
   note?: string
+  /** Template — what this artifact must contain (ⓘ → modal in the UI). */
+  guide?: string[]
 }
 
 export type StageId =
@@ -80,11 +95,11 @@ export interface Stage {
   /** One-liner shown on the card */
   summary: string
   responsibleRoles: RoleId[]
-  actions: string[]
+  actions: Bullet[]
   inputs: string[]
   outputs: Artifact[]
   tools: string[]
-  exitCriteria: string[]
+  exitCriteria: Bullet[]
 }
 
 export interface Transition {
@@ -111,7 +126,7 @@ export interface Gate {
   /** Role whose sign-off flips the status */
   owner: RoleId
   /** What must be true to pass */
-  criteria: string[]
+  criteria: Bullet[]
   /** Links/artifacts that must be on the ticket — no verbal sign-offs */
   evidence: string[]
   /** When (if ever) the gate may be relaxed */

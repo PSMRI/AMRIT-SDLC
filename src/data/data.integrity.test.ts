@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { bulletGuide, bulletText, type Bullet } from '../types/content'
 import { gates } from './lifecycle/gates'
 import { lanes } from './lifecycle/lanes'
 import { pathStages, stages } from './lifecycle/stages'
@@ -55,6 +56,30 @@ describe('lifecycle data', () => {
       expect(s.tools.length, `${s.id} tools`).toBeGreaterThan(0)
       expect(s.exitCriteria.length, `${s.id} exitCriteria`).toBeGreaterThan(0)
     }
+  })
+
+  it('bullets and artifact templates are well-formed', () => {
+    const checkBullets = (owner: string, bullets: Bullet[]) => {
+      for (const b of bullets) {
+        expect(bulletText(b).length, `${owner} bullet text`).toBeGreaterThan(0)
+        const guide = bulletGuide(b)
+        if (guide) {
+          expect(guide.length, `${owner} "${bulletText(b)}" guide`).toBeGreaterThan(0)
+          for (const g of guide) expect(g.length).toBeGreaterThan(0)
+        }
+      }
+    }
+    for (const s of stages) {
+      checkBullets(`stage ${s.id} actions`, s.actions)
+      checkBullets(`stage ${s.id} exitCriteria`, s.exitCriteria)
+      for (const o of s.outputs) {
+        if (o.guide) {
+          expect(o.guide.length, `${s.id} output "${o.name}" guide`).toBeGreaterThan(0)
+          for (const g of o.guide) expect(g.length).toBeGreaterThan(0)
+        }
+      }
+    }
+    for (const g of gates) checkBullets(`gate ${g.id} criteria`, g.criteria)
   })
 
   it('transitions reference valid stages and form a full forward chain', () => {
