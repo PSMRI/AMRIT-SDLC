@@ -869,7 +869,7 @@ export const stages: Stage[] = [
     title: 'Production Release',
     laneId: 'devops-env',
     summary:
-      'Live for end users — deployed against the checklist, tagged, verified, and monitored.',
+      'Live for end users — deployed against the checklist, verified, and monitored.',
     responsibleRoles: ['devops-engineer', 'senior-developer', 'l2-support'],
     actions: [
       {
@@ -881,10 +881,10 @@ export const stages: Stage[] = [
         ],
       },
       {
-        text: 'Merge release-X.Y.Z into main; tag with SemVer (e.g. v3.3.0)',
+        text: 'Merge release-X.Y.Z into main after deployment',
         guide: [
-          'Tag the exact deployed commit — main and production must be the same code',
-          'Attach the release notes to the GitHub release',
+          'Merge the exact deployed commit — main and production must be the same code',
+          'The release-X.Y.Z branch name is the version of record — no git tags used',
           'Mobile: version name/code matches the Play Console build',
         ],
       },
@@ -913,11 +913,11 @@ export const stages: Stage[] = [
     ],
     outputs: [
       {
-        name: 'Production release (tagged)',
+        name: 'Production release',
         ownerRole: 'devops-engineer',
         guide: [
-          'SemVer tag on the exact deployed commit',
-          'GitHub release with release notes attached',
+          'Deployed from release-X.Y.Z; the branch name is the version of record (no git tags)',
+          'Merged into main after the deployment is verified',
           'Artifact provenance: built by CI, promoted from UAT — never a local build',
           'Mobile: Play Console rollout status recorded',
         ],
